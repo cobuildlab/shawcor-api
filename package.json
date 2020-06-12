@@ -26,6 +26,6 @@
   },
   "bin": "./index.js",
   "files": [
-    "index.js",
+    "index.js"
   ]
 }
