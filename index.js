@@ -27,6 +27,9 @@ rl.question(`Input the name of your project (this will be the folder created for
     process.chdir(finalPath);
   }
   rimraf.sync("./.git");
+  rimraf.sync("./.github");
+  rimraf.sync("./.gitignore");
+  rimraf.sync("./.npmignore");
   rimraf.sync("./README");
   rimraf.sync("./package.json");
   rimraf.sync("./package-lock.json");
