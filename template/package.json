@@ -1,5 +1,5 @@
 {
-  "name": "<TODO>",
+  "name": "",
   "version": "0.0.1",
   "description": "<TODO>",
   "main": "lib/index.js",
@@ -34,7 +34,7 @@
     "lint-staged": "^10.2.2",
     "prettier": "^2.0.5",
     "ts-jest": "^25.5.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-jest": "^23.13.1",
     "eslint-plugin-jsdoc": "^25.4.1",
