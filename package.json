@@ -1,0 +1,36 @@
+{
+  "name": "@cobuildlab/create-nodejs-app",
+  "version": "0.0.17",
+  "keywords": [
+    "nodejs",
+    "eslint",
+    "prettier"
+  ],
+  "description": "Create NodeJs apps with configurations and linters.",
+  "homepage": "https://github.com/cobuildlab/create-nodejs-app",
+  "bugs": {
+    "url": "https://github.com/cobuildlab/create-nodejs-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cobuildlab/create-nodejs-app.git"
+  },
+  "author": "@alacret",
+  "license": "GPL-3.0",
+  "engines": {
+    "node": ">=12"
+  },
+  "dependencies": {
+    "adm-zip": "^0.4.14",
+    "rimraf": "^3.0.2"
+  },
+  "bin": "./index.js",
+  "files": [
+    "index.js",
+    "template.zip",
+    "build.js"
+  ],
+  "scripts": {
+    "build": "node build.js"
+  }
+}
