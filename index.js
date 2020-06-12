@@ -40,14 +40,10 @@ rl.question(`create-nodejs-app:\n Input the name of your project (this will be t
 
   const templatePath = path.join(finalPath, "template")
   console.log("create-nodejs-app:\n Moving the template content:", finalPath, templatePath);
-  execSync(`mv ${templatePath}/* .`);
-  execSync(`mv ${templatePath}/.* .`);
+  execSync(`mv ${templatePath}/{,.[^.]}* ${finalPath}`);
 
   console.log("create-nodejs-app:\n Removing 'template' folder...",);
   rimraf.sync("./template");
-
-  if (name)
-    process.chdir(finalPath)
 
   console.log("create-nodejs-app:\n Initializing repo with GIT...");
   execSync(`git init`);
