@@ -1,6 +1,6 @@
 {
   "name": "@cobuildlab/create-nodejs-app",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "keywords": [
     "nodejs",
     "eslint",
@@ -27,10 +27,5 @@
   "bin": "./index.js",
   "files": [
     "index.js",
-    "template.zip",
-    "build.js"
-  ],
-  "scripts": {
-    "build": "node build.js"
-  }
+  ]
 }

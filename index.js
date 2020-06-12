@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 const rimraf = require("rimraf");
@@ -27,14 +26,16 @@ rl.question(`Input the name of your project (this will be the folder created for
     console.log("Cloning: ", o);
     process.chdir(finalPath);
   }
-  console.log("unzipping template.zip...");
-  const zip = new AdmZip("./template.zip");
-  zip.extractAllTo(finalPath, true);
-
-  console.log("deleting extra stuff: ",);
-
   rimraf.sync("./.git");
   rimraf.sync("./README");
+  rimraf.sync("./package.json");
+  rimraf.sync("./package-lock.json");
+  rimraf.sync("./index.js");
+
+  console.log("moving the /template...");
+  fs.renameSync(finalPath, process.cwd());
+
+
 
 });
 
