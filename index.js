@@ -37,12 +37,17 @@ rl.question(`Input the name of your project (this will be the folder created for
   rimraf.sync("./package-lock.json");
   rimraf.sync("./index.js");
 
-  console.log(finalPath)
-  console.log(typeof finalPath)
   const templatePath = path.join(finalPath, "template")
   console.log("moving the template:", finalPath, templatePath);
   execSync(`mv ${templatePath}/* .`);
-  rimraf.sync("./template");
+  // rimraf.sync("./template");
+
+  if (name)
+    process.chdir(finalPath)
+
+  execSync(`git init`);
+  execSync(`npm i`);
+
   rl.close();
 });
 
