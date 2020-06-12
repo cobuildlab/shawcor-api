@@ -10,36 +10,40 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-
 rl.question(`Input the name of your project (this will be the folder created for it), \n or blank to create the project in the current directory (${process.cwd()}): \n `, function (name) {
   let finalPath = process.cwd();
   if (!name) {
-    const o = execSync("git init && git remote add origin https://github.com/cobuildlab/create-nodejs-app.git && git pull origin master && git remote remove origin");
-    console.log("Cloning: ", o);
+    console.log("No name, cloning the template here:", finalPath);
+    execSync("git init")
+    execSync("git remote add origin https://github.com/cobuildlab/create-nodejs-app.git")
+    execSync("git pull origin master")
   } else {
     console.log("create dir: ", name);
-    finalPath = path.join([finalPath, name])
+    finalPath = path.join(finalPath, name)
     if (!fs.existsSync(finalPath)) {
       fs.mkdirSync(finalPath);
     }
-    const o = execSync(`git clone https://github.com/cobuildlab/create-nodejs-app.git ${finalPath}`);
-    console.log("Cloning: ", o);
+    console.log("Cloning... ");
+    execSync(`git clone https://github.com/cobuildlab/create-nodejs-app.git ${finalPath}`);
+    console.log("Changing dir to: ", finalPath);
     process.chdir(finalPath);
   }
   rimraf.sync("./.git");
   rimraf.sync("./.github");
   rimraf.sync("./.gitignore");
   rimraf.sync("./.npmignore");
-  rimraf.sync("./README");
+  rimraf.sync("./README.md");
   rimraf.sync("./package.json");
   rimraf.sync("./package-lock.json");
   rimraf.sync("./index.js");
 
-  console.log("moving the /template...");
-  fs.renameSync(finalPath, process.cwd());
-
-
-
+  console.log(finalPath)
+  console.log(typeof finalPath)
+  const templatePath = path.join(finalPath, "template")
+  console.log("moving the template:", finalPath, templatePath);
+  execSync(`mv ${templatePath}/* .`);
+  rimraf.sync("./template");
+  rl.close();
 });
 
 rl.on("close", function () {
