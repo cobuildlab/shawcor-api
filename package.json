@@ -1,6 +1,6 @@
 {
   "name": "@cobuildlab/create-nodejs-app",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": [
     "nodejs",
     "eslint",
@@ -21,7 +21,6 @@
     "node": ">=12"
   },
   "dependencies": {
-    "adm-zip": "^0.4.14",
     "rimraf": "^3.0.2"
   },
   "bin": "./index.js",
