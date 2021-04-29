@@ -1,30 +1,48 @@
 {
-  "name": "@cobuildlab/create-nodejs-app",
-  "version": "0.1.2",
-  "keywords": [
-    "nodejs",
-    "eslint",
-    "prettier"
-  ],
-  "description": "Create NodeJs apps with configurations and linters.",
-  "homepage": "https://github.com/cobuildlab/create-nodejs-app",
-  "bugs": {
-    "url": "https://github.com/cobuildlab/create-nodejs-app/issues"
+  "name": "npm-package-starter",
+  "version": "1.0.0",
+  "description": "Starter for a npm package",
+  "main": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cobuildlab/create-nodejs-app.git"
-  },
-  "author": "@alacret",
-  "license": "GPL-3.0",
-  "engines": {
-    "node": ">=12"
-  },
+  "author": "Gressia",
+  "license": "ISC",
   "dependencies": {
-    "rimraf": "^3.0.2"
+    "eslint": "^7.25.0",
+    "jest": "^26.6.3",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
+    "typescript": "^4.2.4"
   },
-  "bin": "./index.js",
-  "files": [
-    "index.js"
-  ]
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/(build|node_modules)/"
+    ],
+    "testRegex": [
+      ".test.ts$",
+      ".test.tsx$"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^4.22.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jsdoc": "^32.3.3",
+    "husky": "^6.0.0"
+  }
 }
