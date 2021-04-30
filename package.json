@@ -1,5 +1,5 @@
 {
-  "name": "npm-package-starter",
+  "name": "@cobuildlab/create-nodejs-app",
   "version": "1.0.0",
   "description": "Starter for a npm package",
   "main": "./src/index.ts",
