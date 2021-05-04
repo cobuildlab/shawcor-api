@@ -1,5 +1,7 @@
 # create-nodejs-app
 
+Starter to create new npm packages
+
 # Template for Typescript projects on Cobuild Lab
 
 
