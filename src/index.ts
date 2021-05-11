@@ -5,10 +5,6 @@ const quotes = ['test1', 'test2'];
  * @returns String.
  * @example example
  */
-function randomQuote(): string {
+export function randomQuote(): string {
   return quotes[Math.floor(Math.random() * quotes.length)];
 }
-
-module.exports = {
-  randomQuote,
-};
