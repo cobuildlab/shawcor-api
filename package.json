@@ -6,8 +6,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
-    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "prepare": "npx husky install",
+    "test": "jest"
   },
   "author": "Gressia",
   "license": "ISC",
@@ -40,6 +41,8 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "@types/node": "^15.0.2",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jsdoc": "^32.3.3",
