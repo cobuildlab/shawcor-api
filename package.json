@@ -4,6 +4,7 @@
   "description": "Enverus API for Shawcor",
   "main": "./app.ts",
   "scripts": {
+    "start": "node dist/app.js",
     "build": "tsc",
     "serve": "nodemon app.ts",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
