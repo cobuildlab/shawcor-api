@@ -1,23 +1,21 @@
 {
-  "name": "@cobuildlab/create-nodejs-app",
+  "name": "@cobuildlab/shawcor-api",
   "version": "1.0.0",
-  "description": "Starter for a npm package",
-  "main": "./src/index.ts",
+  "description": "Enverus API for Shawcor",
+  "main": "./app.ts",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
+    "serve": "nodemon app.ts",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "prepare": "npx husky install",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "husky install"
   },
   "author": "Gressia",
   "license": "ISC",
   "dependencies": {
-    "eslint": "^8.8.0",
-    "jest": "^27.5.1",
-    "lint-staged": "^12.3.3",
-    "prettier": "^2.5.1",
-    "typescript": "^4.6.2"
+    "express": "^4.18.1",
+    "jest": "^27.5.1"
   },
   "lint-staged": {
     "*.{js,ts,tsx}": [
@@ -41,11 +39,19 @@
     ]
   },
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
     "@types/node": "^17.0.17",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
     "@typescript-eslint/parser": "^5.11.0",
+    "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jsdoc": "^37.8.2",
-    "husky": "^7.0.4"
+    "husky": "^7.0.4",
+    "lint-staged": "^13.0.3",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.8.2",
+    "typescript": "^4.7.4"
   }
 }
