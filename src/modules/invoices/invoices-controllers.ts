@@ -1,5 +1,7 @@
 import { log, flush } from '../../shared/logger';
-import expressAsyncWrapper from '../../shared/utils';
+import { EnverusAPI } from '../../shared/apis/enverus';
+import { expressAsyncWrapper } from '../../shared/utils';
+import { InvoiceType } from './invoices-types';
 
 export const syncInvoiceToEnverus = expressAsyncWrapper(
   async (request, response) => {
@@ -10,6 +12,11 @@ export const syncInvoiceToEnverus = expressAsyncWrapper(
         2,
       )}`,
     );
+
+    const invoice: InvoiceType = JSON.parse(request.body.invoice);
+
+    const clientEnverus = new EnverusAPI();
+    await clientEnverus.syncInvoice(invoice);
 
     await flush();
     return response.status(200).json({ message: 'Invoice synced to Enverus' });

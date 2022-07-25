@@ -18,10 +18,27 @@ type ResponseFunction = (
  * @param fn - Async function to be wrapped.
  * @returns Wrapped function.
  */
-const expressAsyncWrapper = (fn: AsyncFunction) => {
+export const expressAsyncWrapper = (fn: AsyncFunction) => {
   return (req: Request, res: Response, next: NextFunction) => {
     fn(req, res, next).catch(next);
   };
 };
 
-export default expressAsyncWrapper;
+/**
+ * Helper for try-catch-finally blocks.
+ *
+ * @param promise - Promise function to resolve.
+ * @returns Promise - Promise function to resolve.
+ */
+export async function handleTryCatch<T>(
+  promise: (() => Promise<T>) | Promise<T>,
+): Promise<[T, undefined] | [undefined, Error]> {
+  const currentPromise = typeof promise === 'function' ? promise() : promise;
+
+  try {
+    const result = await currentPromise;
+    return [result, undefined];
+  } catch (error: unknown) {
+    return [undefined, error as Error];
+  }
+}
