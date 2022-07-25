@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["DOM"],
+    "lib": ["es5", "es6", "es2020"],
     "strict": true,
-    "target": "es2017",
+    "target": "es2020",
     "module": "CommonJS",
     "declaration": true,
     "moduleResolution": "node",
