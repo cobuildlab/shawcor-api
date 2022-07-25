@@ -1,6 +1,7 @@
 #React
 node_modules
 build
+dist
 public
 template
 pages/index.tsx
