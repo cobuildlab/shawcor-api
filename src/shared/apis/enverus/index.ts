@@ -46,8 +46,8 @@ export class EnverusAPI {
       );
     }
 
-    const data = await result.json();
+    // const data = await result.json();
 
-    log(`DEBUG: SYNC INVOICE IN ENVERUS: ${JSON.stringify(data, null, 2)}`);
+    log(`DEBUG: SYNC INVOICE IN ENVERUS: ${JSON.stringify(result, null, 2)}`);
   };
 }
