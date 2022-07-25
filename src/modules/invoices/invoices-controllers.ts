@@ -13,7 +13,7 @@ export const syncInvoiceToEnverus = expressAsyncWrapper(
       )}`,
     );
 
-    const invoice: InvoiceType = JSON.parse(request.body.invoice);
+    const { invoice }: { invoice: InvoiceType } = request.body;
 
     const clientEnverus = new EnverusAPI();
     await clientEnverus.syncInvoice(invoice);
