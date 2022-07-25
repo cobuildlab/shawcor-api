@@ -7,8 +7,8 @@ const app = express();
 const port = 3000;
 
 // JSON Parser
+// app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
 app.use('/api', router);
 
