@@ -55,7 +55,6 @@ export type InvoiceType = EntityBaseType & {
   wellLocation: string;
   workLocation: string;
   syncWith: string;
-  invoiceJSON: any;
   invoiceLinesRelation?: {
     items: Array<InvoiceLineType>;
     count: number;
