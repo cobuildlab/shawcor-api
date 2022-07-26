@@ -14,6 +14,10 @@ export class EnverusAPI {
    * @param invoice - Invoice data from 8base DB.
    */
   syncInvoice = async (invoice: InvoiceType): Promise<void> => {
+    const bodyXML = getInvoiceBodyXML(invoice);
+
+    log(`DEBUG: REQUEST XML: ${bodyXML}`);
+
     const [result, error] = await handleTryCatch(
       fetch(
         'https://onboard-api.openinvoice.com/docp/supply-chain/v1/invoices/invoice.submit',
@@ -25,9 +29,9 @@ export class EnverusAPI {
           }),
           headers: {
             accept: 'application/json',
-            'content-type': 'application/xml',
+            'content-type': 'application/pidx.v10+xml',
           },
-          body: getInvoiceBodyXML(invoice),
+          body: bodyXML,
         },
       ),
     );
