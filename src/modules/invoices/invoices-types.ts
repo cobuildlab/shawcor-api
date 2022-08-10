@@ -15,6 +15,7 @@ export type CustomerType = EntityBaseType & {
     count: number;
   };
   duns?: number;
+  site?: string;
   archivedAt: string | null;
   approvedInvoices?: { count: number };
   rejectedInvoices?: { count: number };
@@ -29,6 +30,13 @@ export type InvoiceStatusType =
   | 'unsubmitted'
   | 'paid';
 
+export type InvoiceTaxLineType = EntityBaseType & {
+  taxAmount: number;
+  taxCode: string;
+  taxId: number;
+  taxPercentage: number;
+};
+
 export type InvoiceLineType = EntityBaseType & {
   itemNo: string;
   description: string;
@@ -36,6 +44,9 @@ export type InvoiceLineType = EntityBaseType & {
   quantity: number;
   unitPrice: number;
   total: number;
+  taxLinesRelation?: {
+    items: Array<InvoiceTaxLineType>;
+  };
 };
 
 export type InvoiceType = EntityBaseType & {
@@ -66,4 +77,9 @@ export type InvoiceType = EntityBaseType & {
   approver: string;
   afe: string;
   ticket: string;
+};
+
+export type InvoiceBody = {
+  invoice: InvoiceType;
+  file: string;
 };
