@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
+import fetch, { Response as NodeFetchResponse } from 'node-fetch';
 import { Request, Response, NextFunction } from 'express';
+
+import { log, flush } from './logger';
 
 type AsyncFunction = (
   req: Request,
@@ -42,3 +45,25 @@ export async function handleTryCatch<T>(
     return [undefined, error as Error];
   }
 }
+
+export const fetchFileByUrl = async (
+  url: string,
+): Promise<NodeFetchResponse> => {
+  const [result, error] = await handleTryCatch(fetch(url));
+
+  if (error) {
+    log(
+      `ERROR FETCHING FILE: ${
+        typeof error === 'string' ? error : JSON.stringify(error)
+      }`,
+    );
+    await flush();
+    throw new Error(
+      `Error fetching file: ${
+        typeof error === 'string' ? error : JSON.stringify(error)
+      }`,
+    );
+  }
+
+  return result;
+};
