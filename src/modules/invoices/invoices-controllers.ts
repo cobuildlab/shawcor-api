@@ -1,6 +1,6 @@
 import { log, flush } from '../../shared/logger';
 import { EnverusAPI } from '../../shared/apis/enverus';
-import { expressAsyncWrapper } from '../../shared/utils';
+import { expressAsyncWrapper, fetchFileByUrl } from '../../shared/utils';
 import { InvoiceBody } from './invoices-types';
 
 export const syncInvoiceToEnverus = expressAsyncWrapper(
@@ -9,8 +9,12 @@ export const syncInvoiceToEnverus = expressAsyncWrapper(
 
     log(`syncInvoiceToEnverus invoice: ${JSON.stringify(invoice, null, 2)}`);
 
+    const fileResponse = await fetchFileByUrl(file);
+    // ENCODE TO BASE 64
+    const fileBase64 = (await fileResponse.buffer()).toString('base64');
+
     const clientEnverus = new EnverusAPI();
-    await clientEnverus.syncInvoice(invoice, file);
+    await clientEnverus.syncInvoice(invoice, fileBase64);
 
     await flush();
     return response.status(200).json({ message: 'Invoice synced to Enverus' });
