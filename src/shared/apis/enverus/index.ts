@@ -1,9 +1,16 @@
 import fetch from 'node-fetch';
 import * as https from 'https';
 import * as fs from 'fs';
+import * as fxp from 'fast-xml-parser';
+const FormData = require('form-data');
 
 import { handleTryCatch } from '../../utils';
 import { log, flush } from '../../logger';
+import {
+  PATH_ENVERUS_OPEN_INVOICE,
+  PATH_PFX,
+  PASSPHRASE,
+} from '../../constants';
 import { InvoiceType } from '../../../modules/invoices/invoices-types';
 import { getInvoiceBodyXML } from './helpers';
 
@@ -12,31 +19,44 @@ export class EnverusAPI {
    * Method to synchronize invoice.
    *
    * @param invoice - Invoice data from 8base DB.
+   * @param file - Invoice file from 8base DB (base 64).
    */
-  syncInvoice = async (invoice: InvoiceType): Promise<void> => {
+  syncInvoice = async (invoice: InvoiceType, file: string): Promise<void> => {
     const bodyXML = getInvoiceBodyXML(invoice);
 
     log(`DEBUG: REQUEST XML: ${bodyXML}`);
+    // console.log(`DEBUG: REQUEST XML: ${bodyXML}`);
+
+    const formData = new FormData();
+    formData.append('pidxv10_invoice_xml', bodyXML, {
+      contentType: 'application/xml',
+    });
+    formData.append('Attachment1', Buffer.from(file, 'base64'), {
+      contentType: 'application/pdf',
+      contentTransferEncoding: 'base64',
+    });
 
     const [result, error] = await handleTryCatch(
-      fetch(
-        'https://onboard-api.openinvoice.com/docp/supply-chain/v1/invoices/invoice.submit',
-        {
-          method: 'POST',
-          agent: new https.Agent({
-            pfx: fs.readFileSync('pskeystore.p12'),
-            passphrase: 'shawcor',
-          }),
-          headers: {
-            accept: 'application/json',
-            'content-type': 'application/pidx.v10+xml',
-          },
-          body: bodyXML,
+      fetch(PATH_ENVERUS_OPEN_INVOICE, {
+        method: 'POST',
+        agent: new https.Agent({
+          pfx: fs.readFileSync(PATH_PFX),
+          passphrase: PASSPHRASE,
+        }),
+        headers: {
+          accept: '*/*',
+          'content-type': 'multipart/mixed; boundary=' + formData.getBoundary(),
         },
-      ),
+        body: formData,
+      }),
     );
 
     if (error) {
+      // console.log(
+      //   `ERROR syncInvoice(Enverus): ${
+      //     typeof error === 'string' ? error : JSON.stringify(error)
+      //   }`,
+      // );
       log(
         `ERROR syncInvoice(Enverus): ${
           typeof error === 'string' ? error : JSON.stringify(error)
@@ -50,8 +70,28 @@ export class EnverusAPI {
       );
     }
 
-    // const data = await result.json();
+    const textResponse = await result.text();
+    const jsonResponse = fxp.parse(textResponse);
 
-    log(`DEBUG: SYNC INVOICE IN ENVERUS: ${JSON.stringify(result, null, 2)}`);
+    if (result.status !== 200) {
+      log(
+        `ERROR syncInvoice(Enverus): ${JSON.stringify(
+          jsonResponse.DOResponse,
+        )}`,
+      );
+      await flush();
+      throw new Error(
+        `Error syncInvoice(Enverus): ${JSON.stringify(
+          jsonResponse.DOResponse,
+        )}`,
+      );
+    }
+
+    log(
+      `DEBUG: SYNC INVOICE IN ENVERUS: ${
+        (JSON.stringify(jsonResponse.DOResponse), null, 2)
+      }`,
+    );
+    // console.log(`DEBUG: SYNC INVOICE IN ENVERUS: ${JSON.stringify(jsonResponse.DOResponse, null, 2)}`);
   };
 }
