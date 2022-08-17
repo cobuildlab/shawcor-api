@@ -6,8 +6,9 @@ const getSite = (customerName: string): string => {
     return 'Accounts Payable - Canada G to N';
   else if (customerName.toLowerCase().includes('crescent point resources'))
     return 'DRILLING & COMPLETION';
-  else if (customerName.includes('obsidian energy')) return 'Capital';
-  else if (customerName.includes('tundra oil and gas'))
+  else if (customerName.toLowerCase().includes('obsidian energy'))
+    return 'Capital';
+  else if (customerName.toLowerCase().includes('tundra oil and gas'))
     return 'Tundra - Virden';
   return '';
 };
