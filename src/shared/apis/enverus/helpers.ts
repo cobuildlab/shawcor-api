@@ -1,8 +1,15 @@
 import { InvoiceType } from '../../../modules/invoices/invoices-types';
 
-const getSite = (site: string | undefined): string => {
-  console.log('DEBUG: site: ', site);
-  return 'Tundra - Calgary';
+const getSite = (customerName: string): string => {
+  console.log('DEBUG: site: ', customerName);
+  if (customerName.toLowerCase().includes('baytex energy'))
+    return 'Accounts Payable - Canada G to N';
+  else if (customerName.toLowerCase().includes('crescent point resources'))
+    return 'DRILLING & COMPLETION';
+  else if (customerName.includes('obsidian energy')) return 'Capital';
+  else if (customerName.includes('tundra oil and gas'))
+    return 'Tundra - Virden';
+  return '';
 };
 
 const getTaxTypeCode = (taxCode: string): string => {
@@ -32,7 +39,7 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
 }</pidx:PartnerIdentifier>
                 <pidx:ContactInformation contactInformationIndicator="BuyerDepartment">
                     <pidx:ContactName>${getSite(
-    invoice.customer.site,
+    invoice.customer.name,
   )}</pidx:ContactName>
                 </pidx:ContactInformation>
             </pidx:PartnerInformation>
