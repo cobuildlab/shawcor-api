@@ -48,6 +48,12 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
             <pidx:PartnerInformation partnerRoleIndicator="RemitTo">
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">249054263</pidx:PartnerIdentifier>
             </pidx:PartnerInformation>
+            <!--Optional for OpenInvoice, may be required by the buyer-->
+            <pidx:PurchaseOrderInformation>
+              <pidx:PurchaseOrderNumber>${
+  invoice.customer.customerPO
+}</pidx:PurchaseOrderNumber>
+            </pidx:PurchaseOrderInformation>
             <!--Required for OpenInvoice-->
             <pidx:PrimaryCurrency>
                 <pidx:CurrencyCode>${invoice.currency}</pidx:CurrencyCode>
