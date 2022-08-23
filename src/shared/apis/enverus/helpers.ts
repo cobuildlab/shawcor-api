@@ -48,12 +48,17 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
             <pidx:PartnerInformation partnerRoleIndicator="RemitTo">
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">249054263</pidx:PartnerIdentifier>
             </pidx:PartnerInformation>
-            <!--Optional for OpenInvoice, may be required by the buyer-->
-            <pidx:PurchaseOrderInformation>
-              <pidx:PurchaseOrderNumber>${
-  invoice.customer.customerPO
-}</pidx:PurchaseOrderNumber>
-            </pidx:PurchaseOrderInformation>
+            ${
+  invoice.customer.customerPO &&
+              `
+              <!--Optional for OpenInvoice, may be required by the buyer-->
+              <pidx:PurchaseOrderInformation>
+                <pidx:PurchaseOrderNumber>
+                  ${invoice.customer.customerPO}
+                </pidx:PurchaseOrderNumber>
+              </pidx:PurchaseOrderInformation>
+            `
+}
             <!--Required for OpenInvoice-->
             <pidx:PrimaryCurrency>
                 <pidx:CurrencyCode>${invoice.currency}</pidx:CurrencyCode>
@@ -111,9 +116,14 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   lineItem.description
 }</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
-                <pidx:PurchaseOrderLineItemNumber>
-                  ${invoice.customer.customerPO}
-                </pidx:PurchaseOrderLineItemNumber>
+                ${
+  invoice.customer.customerPO &&
+                  `
+                  <pidx:PurchaseOrderLineItemNumber>
+                    ${invoice.customer.customerPO}
+                  </pidx:PurchaseOrderLineItemNumber>
+                `
+}
                 <pidx:Pricing>
                     <pidx:UnitPrice>
                         <pidx:MonetaryAmount>${
