@@ -49,46 +49,50 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">249054263</pidx:PartnerIdentifier>
             </pidx:PartnerInformation>
             ${
-  invoice.customer.customerPO &&
-              `
+  invoice.customer.customerPO
+    ? `
               <!--Optional for OpenInvoice, may be required by the buyer-->
               <pidx:PurchaseOrderInformation>
-                <pidx:PurchaseOrderNumber>
-                  ${invoice.customer.customerPO}
-                </pidx:PurchaseOrderNumber>
+                <pidx:PurchaseOrderNumber>${invoice.customer.customerPO}</pidx:PurchaseOrderNumber>
               </pidx:PurchaseOrderInformation>
             `
+    : ''
 }
             <!--Required for OpenInvoice-->
             <pidx:PrimaryCurrency>
                 <pidx:CurrencyCode>${invoice.currency}</pidx:CurrencyCode>
             </pidx:PrimaryCurrency>
-            <!--Optional for OpenInvoice, may be required by the buyer-->
-            <pidx:JobLocationInformation>
-              <pidx:WellInformation>
-                <pidx:WellIdentifier>${
+            ${
   invoice.wellLocation
-}</pidx:WellIdentifier>
-              </pidx:WellInformation>
-            </pidx:JobLocationInformation>
-    
+    ? `
+              <!--Optional for OpenInvoice, may be required by the buyer-->
+              <pidx:JobLocationInformation>
+                <pidx:WellInformation>
+                  <pidx:WellIdentifier>${invoice.wellLocation}</pidx:WellIdentifier>
+                </pidx:WellInformation>
+              </pidx:JobLocationInformation>
+            `
+    : ''
+}
             <!--Optional for OpenInvoice, may be required by the buyer-->
             <!--ReferenceInformation at the header (as well as PO, Field Ticket, Location and Service Datetime) will be mapped to all line items that do not have their own ReferenceInformation specified. For example, (1) a single AFE specified at the header will apply to the entire invoice, (2) each line item may have its own AFE specified, or (3) a header AFE applies to all line items without their own AFEs.-->
             ${
-  invoice.afe &&
-              `
+  invoice.afe
+    ? `
               <pidx:ReferenceInformation referenceInformationIndicator="AFENumber">
                 <pidx:ReferenceNumber>${invoice.afe}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
+    : ''
 }
             ${
-  invoice.costCenter &&
-              `
+  invoice.costCenter
+    ? `
               <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
                 <pidx:ReferenceNumber>${invoice.costCenter}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
+    : ''
 }
             <pidx:Attachment>
               <pidx:AttachmentPurposeCode>Other</pidx:AttachmentPurposeCode>
@@ -125,12 +129,11 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
 }</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
                 ${
-  invoice.customer.customerPO &&
-                  `
-                  <pidx:PurchaseOrderLineItemNumber>
-                    ${invoice.customer.customerPO}
-                  </pidx:PurchaseOrderLineItemNumber>
+  invoice.customer.customerPO
+    ? `
+                  <pidx:PurchaseOrderLineItemNumber>${invoice.customer.customerPO}</pidx:PurchaseOrderLineItemNumber>
                 `
+    : ''
 }
                 <pidx:Pricing>
                     <pidx:UnitPrice>
@@ -151,41 +154,43 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                         `
                     <!--All PIDX TaxTypeCodes EXCEPT 'Other' are supported.-->
                     <pidx:Tax>
-                      <pidx:TaxTypeCode>
-                        ${getTaxTypeCode(taxLine.taxCode)}
-                      </pidx:TaxTypeCode>
+                      <pidx:TaxTypeCode>${getTaxTypeCode(
+    taxLine.taxCode,
+  )}</pidx:TaxTypeCode>
                       <pidx:TaxRate>${taxLine.taxPercentage}</pidx:TaxRate>
                       <pidx:TaxAmount>
-                        <pidx:MonetaryAmount>
-                          ${taxLine.taxAmount}
-                        </pidx:MonetaryAmount>
+                        <pidx:MonetaryAmount>${
+  taxLine.taxAmount
+}</pidx:MonetaryAmount>
                       </pidx:TaxAmount>
                     </pidx:Tax>
                     `,
                     )
                     .join('')
 }
-                <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodStart">
-                  ${invoice.invoiceDate}T00:00:00Z
-                </pidx:ServiceDateTime>
-                <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodEnd">
-                  ${invoice.invoiceDate}T00:00:00Z
-                </pidx:ServiceDateTime>
+                <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodStart">${
+  invoice.invoiceDate
+}T00:00:00Z</pidx:ServiceDateTime>
+                <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodEnd">${
+  invoice.invoiceDate
+}T00:00:00Z</pidx:ServiceDateTime>
                 ${
-  invoice.afe &&
-                  `
+  invoice.afe
+    ? `
                   <pidx:ReferenceInformation referenceInformationIndicator="AFENumber">
                     <pidx:ReferenceNumber>${invoice.afe}</pidx:ReferenceNumber>
                   </pidx:ReferenceInformation>
                 `
+    : ''
 }
                 ${
-  invoice.costCenter &&
-                  `
+  invoice.costCenter
+    ? `
                   <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
                     <pidx:ReferenceNumber>${invoice.costCenter}</pidx:ReferenceNumber>
                   </pidx:ReferenceInformation>
                 `
+    : ''
 }
               </pidx:InvoiceLineItem>
               `,
