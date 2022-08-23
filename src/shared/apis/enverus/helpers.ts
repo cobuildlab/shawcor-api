@@ -100,7 +100,7 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
 }</pidx:UnitOfMeasureCode>
                 </pidx:InvoiceQuantity>
                 <pidx:LineItemInformation>
-                    <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">test</pidx:LineItemIdentifier>
+                    <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">MC-MSC</pidx:LineItemIdentifier>
                     <pidx:LineItemDescription>${
   lineItem.description
 }</pidx:LineItemDescription>
