@@ -143,10 +143,10 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
 }
                 <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodStart">${
   invoice.invoiceDate
-}</pidx:ServiceDateTime>
+}T00:00:00Z</pidx:ServiceDateTime>
                 <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodEnd">${
   invoice.invoiceDate
-}</pidx:ServiceDateTime>
+}T00:00:00Z</pidx:ServiceDateTime>
                 <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
                   <pidx:ReferenceNumber>${
   invoice.costCenter
