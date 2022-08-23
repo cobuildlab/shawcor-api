@@ -105,6 +105,9 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   lineItem.description
 }</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
+                <pidx:PurchaseOrderLineItemNumber>
+                  ${invoice.customer.customerPO}
+                </pidx:PurchaseOrderLineItemNumber>
                 <pidx:Pricing>
                     <pidx:UnitPrice>
                         <pidx:MonetaryAmount>${
@@ -138,6 +141,17 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                     )
                     .join('')
 }
+                <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodStart">${
+  invoice.invoiceDate
+}</pidx:ServiceDateTime>
+                <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodEnd">${
+  invoice.invoiceDate
+}</pidx:ServiceDateTime>
+                <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
+                  <pidx:ReferenceNumber>${
+  invoice.costCenter
+}</pidx:ReferenceNumber>
+                </pidx:ReferenceInformation>
               </pidx:InvoiceLineItem>
               `,
     )
