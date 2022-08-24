@@ -5,9 +5,11 @@ import { InvoiceBody } from './invoices-types';
 
 export const syncInvoiceToEnverus = expressAsyncWrapper(
   async (request, response) => {
-    const { invoice, file }: InvoiceBody = request.body;
+    log(
+      `syncInvoiceToEnverus invoice: ${JSON.stringify(request.body, null, 2)}`,
+    );
 
-    log(`syncInvoiceToEnverus invoice: ${JSON.stringify(invoice, null, 2)}`);
+    const { invoice, file }: InvoiceBody = request.body;
 
     const fileResponse = await fetchFileByUrl(file);
     // ENCODE TO BASE 64
