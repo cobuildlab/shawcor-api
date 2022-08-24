@@ -39,8 +39,8 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   invoice.customer.duns
 }</pidx:PartnerIdentifier>
                 <pidx:ContactInformation contactInformationIndicator="BuyerDepartment">
-                    <pidx:ContactName>${getSite(
-    xmlescape(invoice.customer.name),
+                    <pidx:ContactName>${xmlescape(
+    getSite(invoice.customer.name),
   )}</pidx:ContactName>
                 </pidx:ContactInformation>
             </pidx:PartnerInformation>
