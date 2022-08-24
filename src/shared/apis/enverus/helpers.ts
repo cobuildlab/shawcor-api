@@ -1,8 +1,7 @@
 import { InvoiceType } from '../../../modules/invoices/invoices-types';
-import * as xmlescape from 'escape-xml';
+const xmlescape = require('escape-xml');
 
 const getSite = (customerName: string): string => {
-  console.log('DEBUG: site: ', customerName);
   if (customerName.toLowerCase().includes('baytex energy'))
     return 'Accounts Payable - Canada G to N';
   else if (customerName.toLowerCase().includes('crescent point resources'))
