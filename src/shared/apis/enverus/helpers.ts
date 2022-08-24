@@ -1,4 +1,5 @@
 import { InvoiceType } from '../../../modules/invoices/invoices-types';
+import * as xmlescape from 'escape-xml';
 
 const getSite = (customerName: string): string => {
   console.log('DEBUG: site: ', customerName);
@@ -40,7 +41,7 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
 }</pidx:PartnerIdentifier>
                 <pidx:ContactInformation contactInformationIndicator="BuyerDepartment">
                     <pidx:ContactName>${getSite(
-    invoice.customer.name.replace('&', '&amp;'),
+    xmlescape(invoice.customer.name),
   )}</pidx:ContactName>
                 </pidx:ContactInformation>
             </pidx:PartnerInformation>
@@ -49,11 +50,11 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">249054263</pidx:PartnerIdentifier>
             </pidx:PartnerInformation>
             ${
-  invoice.customer.customerPO
+  invoice.purchaseOrder
     ? `
               <!--Optional for OpenInvoice, may be required by the buyer-->
               <pidx:PurchaseOrderInformation>
-                <pidx:PurchaseOrderNumber>${invoice.customer.customerPO}</pidx:PurchaseOrderNumber>
+                <pidx:PurchaseOrderNumber>${invoice.purchaseOrder}</pidx:PurchaseOrderNumber>
               </pidx:PurchaseOrderInformation>
             `
     : ''
@@ -68,9 +69,8 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
               <!--Optional for OpenInvoice, may be required by the buyer-->
               <pidx:JobLocationInformation>
                 <pidx:WellInformation>
-                  <pidx:WellIdentifier>${invoice.wellLocation.replace(
-    '&',
-    '&amp;',
+                  <pidx:WellIdentifier>${xmlescape(
+    invoice.wellLocation,
   )}</pidx:WellIdentifier>
                 </pidx:WellInformation>
               </pidx:JobLocationInformation>
@@ -83,9 +83,8 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   invoice.afe
     ? `
               <pidx:ReferenceInformation referenceInformationIndicator="AFENumber">
-                <pidx:ReferenceNumber>${invoice.afe.replace(
-    '&',
-    '&amp;',
+                <pidx:ReferenceNumber>${xmlescape(
+    invoice.afe,
   )}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
@@ -95,9 +94,8 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   invoice.costCenter
     ? `
               <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
-                <pidx:ReferenceNumber>${invoice.costCenter.replace(
-    '&',
-    '&amp;',
+                <pidx:ReferenceNumber>${xmlescape(
+    invoice.costCenter,
   )}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
@@ -133,15 +131,14 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 </pidx:InvoiceQuantity>
                 <pidx:LineItemInformation>
                     <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">MC-MSC</pidx:LineItemIdentifier>
-                    <pidx:LineItemDescription>${lineItem.description.replace(
-    '&',
-    '&amp;',
+                    <pidx:LineItemDescription>${xmlescape(
+    lineItem.description,
   )}</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
                 ${
-  invoice.customer.customerPO
+  invoice.purchaseOrder
     ? `
-                  <pidx:PurchaseOrderLineItemNumber>${invoice.customer.customerPO}</pidx:PurchaseOrderLineItemNumber>
+                  <pidx:PurchaseOrderLineItemNumber>${invoice.purchaseOrder}</pidx:PurchaseOrderLineItemNumber>
                 `
     : ''
 }
@@ -188,9 +185,8 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   invoice.afe
     ? `
                   <pidx:ReferenceInformation referenceInformationIndicator="AFENumber">
-                    <pidx:ReferenceNumber>${invoice.afe.replace(
-    '&',
-    '&amp;',
+                    <pidx:ReferenceNumber>${xmlescape(
+    invoice.afe,
   )}</pidx:ReferenceNumber>
                   </pidx:ReferenceInformation>
                 `
@@ -200,9 +196,8 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   invoice.costCenter
     ? `
                   <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
-                    <pidx:ReferenceNumber>${invoice.costCenter.replace(
-    '&',
-    '&amp;',
+                    <pidx:ReferenceNumber>${xmlescape(
+    invoice.costCenter,
   )}</pidx:ReferenceNumber>
                   </pidx:ReferenceInformation>
                 `
