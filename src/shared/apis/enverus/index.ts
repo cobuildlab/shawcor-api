@@ -84,7 +84,11 @@ export class EnverusAPI {
       //     jsonResponse.DOResponse,
       //   )}`,
       // );
-      return [undefined, Error(JSON.stringify(jsonResponse.DOResponse.Errors))];
+      let msjError = '';
+      const errorObject = jsonResponse.DOResponse.Errors.Error;
+      if (Array.isArray(errorObject)) msjError = errorObject[0];
+      else msjError = errorObject;
+      return [undefined, Error(msjError)];
     }
 
     log(
