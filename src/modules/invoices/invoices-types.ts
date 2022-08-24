@@ -3,7 +3,6 @@ import { AddressType, EntityBaseType } from '../../shared/types';
 export type CustomerType = EntityBaseType & {
   customerId: string;
   customerNo: string;
-  customerPO: string;
   name: string;
   email: string;
   phone: string;
@@ -77,6 +76,7 @@ export type InvoiceType = EntityBaseType & {
   approver: string;
   afe: string;
   ticket: string;
+  purchaseOrder: string;
 };
 
 export type InvoiceBody = {
