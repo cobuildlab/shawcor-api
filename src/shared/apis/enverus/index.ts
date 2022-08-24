@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+import fetch, { Response } from 'node-fetch';
 import * as https from 'https';
 import * as fs from 'fs';
 import * as fxp from 'fast-xml-parser';
@@ -21,7 +21,10 @@ export class EnverusAPI {
    * @param invoice - Invoice data from 8base DB.
    * @param file - Invoice file from 8base DB (base 64).
    */
-  syncInvoice = async (invoice: InvoiceType, file: string): Promise<void> => {
+  syncInvoice = async (
+    invoice: InvoiceType,
+    file: string,
+  ): Promise<[Response, undefined] | [undefined, Error]> => {
     const bodyXML = getInvoiceBodyXML(invoice);
 
     log(`DEBUG: REQUEST XML: ${bodyXML}`);
@@ -63,11 +66,7 @@ export class EnverusAPI {
         }`,
       );
       await flush();
-      throw new Error(
-        `Error syncInvoice(Enverus): ${
-          typeof error === 'string' ? error : JSON.stringify(error)
-        }`,
-      );
+      return [undefined, error];
     }
 
     const textResponse = await result.text();
@@ -80,11 +79,12 @@ export class EnverusAPI {
         )}`,
       );
       await flush();
-      throw new Error(
-        `Error syncInvoice(Enverus): ${JSON.stringify(
-          jsonResponse.DOResponse,
-        )}`,
-      );
+      // throw new Error(
+      //   `Error syncInvoice(Enverus): ${JSON.stringify(
+      //     jsonResponse.DOResponse,
+      //   )}`,
+      // );
+      return [undefined, Error(JSON.stringify(jsonResponse.DOResponse.Errors))];
     }
 
     log(
@@ -92,6 +92,7 @@ export class EnverusAPI {
         (JSON.stringify(jsonResponse.DOResponse), null, 2)
       }`,
     );
-    // console.log(`DEBUG: SYNC INVOICE IN ENVERUS: ${JSON.stringify(jsonResponse.DOResponse, null, 2)}`);
+
+    return [result, undefined];
   };
 }
