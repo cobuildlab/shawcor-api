@@ -18,11 +18,11 @@ export const syncInvoiceToEnverus = expressAsyncWrapper(
     const clientEnverus = new EnverusAPI();
     const [, error] = await clientEnverus.syncInvoice(invoice, fileBase64);
 
+    await flush();
+
     if (error) {
       return response.status(400).json({ message: error.message });
     }
-
-    await flush();
     return response.status(200).json({ message: 'Invoice synced to Enverus' });
   },
 );
