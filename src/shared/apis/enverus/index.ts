@@ -7,14 +7,131 @@ const FormData = require('form-data');
 import { handleTryCatch } from '../../utils';
 import { log, flush } from '../../logger';
 import {
-  PATH_ENVERUS_OPEN_INVOICE,
+  PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE,
+  PATH_POST_INVOICE_OPEN_INVOICE,
   PATH_PFX,
   PASSPHRASE,
 } from '../../constants';
-import { InvoiceType } from '../../../modules/invoices/invoices-types';
+import {
+  FetchStatusInvoiceResponse,
+  InvoiceType,
+} from '../../../modules/invoices/invoices-types';
 import { getInvoiceBodyXML } from './helpers';
 
 export class EnverusAPI {
+  /**
+   * Method for fetch invoice status.
+   *
+   * @param duns - Buyer duns.
+   * @param date - Submitted date.
+   * @param invoiceId - Invoice ID.
+   */
+  fetchStatusInvoice = async (
+    duns: string,
+    date: string,
+    invoiceId: string | undefined,
+  ): Promise<[FetchStatusInvoiceResponse, undefined] | [undefined, Error]> => {
+    const filter = `buyerDUNS eq ${duns} and status eq 'disputed' and lastActionDate eq ${date}`;
+    let statusInvoice = '';
+    let invoiceNumberId = invoiceId;
+
+    if (!invoiceNumberId) {
+      const [result, error] = await handleTryCatch(
+        fetch(`${PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE}?$filter=${filter}`, {
+          method: 'GET',
+          agent: new https.Agent({
+            pfx: fs.readFileSync(PATH_PFX),
+            passphrase: PASSPHRASE,
+          }),
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        }),
+      );
+
+      if (error) {
+        log(
+          `ERROR fetchStatusInvoice(Enverus): ${
+            typeof error === 'string' ? error : JSON.stringify(error)
+          }`,
+        );
+        await flush();
+        return [undefined, error];
+      }
+
+      const jsonResponse = await result.json();
+
+      log(
+        `DEBUG: FECTH INVOICE STATUS IN ENVERUS: ${JSON.stringify(
+          jsonResponse,
+        )}`,
+      );
+
+      if (!jsonResponse.invoices) {
+        log('ERROR fetchStatusInvoice(Enverus): Not found invoice id');
+        await flush();
+        return [undefined, Error('Not found invoice Id')];
+      }
+
+      const link: string = jsonResponse.invoices[0].links[0].uri;
+      invoiceNumberId = link.split('/').pop();
+    }
+
+    if (!invoiceNumberId) {
+      log('ERROR fetchStatusInvoice(Enverus): Not found invoice id');
+      await flush();
+      return [undefined, Error('Not found invoice Id')];
+    }
+
+    const [responseInvoice, errorInvoice] = await handleTryCatch(
+      fetch(`${PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE}/${invoiceNumberId}`, {
+        method: 'GET',
+        agent: new https.Agent({
+          pfx: fs.readFileSync(PATH_PFX),
+          passphrase: PASSPHRASE,
+        }),
+        headers: {
+          'Content-Type': 'application/xml',
+        },
+      }),
+    );
+
+    if (errorInvoice) {
+      log(
+        `ERROR fetchStatusInvoice(Enverus): ${
+          typeof errorInvoice === 'string'
+            ? errorInvoice
+            : JSON.stringify(errorInvoice)
+        }`,
+      );
+      await flush();
+      return [undefined, errorInvoice];
+    }
+
+    const textResponseInvoice = await responseInvoice.text();
+    const jsonresponseInvoice = fxp.parse(textResponseInvoice);
+
+    const lineItems =
+      jsonresponseInvoice['pidx:InvoiceResponse'][
+        'pidx:InvoiceResponseDetails'
+      ]['pidx:InvoiceResponseLineItem'];
+    const lineItemsStatuses: string[] = lineItems.map(
+      (li: { 'pidx:LineStatusCode': string }) => li['pidx:LineStatusCode'],
+    );
+
+    if (lineItemsStatuses.some((lis) => lis === 'Reject'))
+      statusInvoice = 'Reject';
+
+    return [
+      {
+        invoiceId: invoiceNumberId,
+        status: statusInvoice,
+      },
+      undefined,
+    ];
+  };
+
   /**
    * Method to synchronize invoice.
    *
@@ -40,7 +157,7 @@ export class EnverusAPI {
     });
 
     const [result, error] = await handleTryCatch(
-      fetch(PATH_ENVERUS_OPEN_INVOICE, {
+      fetch(PATH_POST_INVOICE_OPEN_INVOICE, {
         method: 'POST',
         agent: new https.Agent({
           pfx: fs.readFileSync(PATH_PFX),
