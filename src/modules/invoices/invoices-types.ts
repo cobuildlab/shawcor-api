@@ -83,3 +83,14 @@ export type InvoiceBody = {
   invoice: InvoiceType;
   file: string;
 };
+
+export type FetchStatusBody = {
+  dunsBuyer: string;
+  submittedDate: string;
+  invoiceId?: string;
+};
+
+export type FetchStatusInvoiceResponse = {
+  invoiceId: string;
+  status: string;
+};
