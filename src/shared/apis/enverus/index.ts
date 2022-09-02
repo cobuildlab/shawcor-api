@@ -118,9 +118,15 @@ export class EnverusAPI {
       jsonresponseInvoice['pidx:InvoiceResponse'][
         'pidx:InvoiceResponseDetails'
       ]['pidx:InvoiceResponseLineItem'];
-    const lineItemsStatuses: string[] = lineItems.map(
-      (li: { 'pidx:LineStatusCode': string }) => li['pidx:LineStatusCode'],
-    );
+
+    let lineItemsStatuses: string[] = [];
+    if (Array.isArray(lineItems)) {
+      lineItemsStatuses = lineItems.map(
+        (li: { 'pidx:LineStatusCode': string }) => li['pidx:LineStatusCode'],
+      );
+    } else {
+      lineItemsStatuses.push(lineItems['pidx:LineStatusCode']);
+    }
 
     if (lineItemsStatuses.some((lis) => lis === 'Reject'))
       statusInvoice = 'Reject';
