@@ -31,11 +31,11 @@ export class EnverusAPI {
     date: string,
     invoiceId: string | undefined,
   ): Promise<[FetchStatusInvoiceResponse, undefined] | [undefined, Error]> => {
-    const filter = `buyerDUNS eq ${duns} and status eq 'disputed' and lastActionDate eq ${date}`;
     let statusInvoice = '';
     let invoiceNumberId = invoiceId;
 
     if (!invoiceNumberId) {
+      const filter = `buyerDUNS eq ${duns} and status eq 'approved,disputed,paid,received' and lastActionDate eq ${date}`;
       const [result, error] = await handleTryCatch(
         fetch(`${PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE}?$filter=${filter}`, {
           method: 'GET',
@@ -74,6 +74,10 @@ export class EnverusAPI {
         return [undefined, Error('Not found invoice Id')];
       }
 
+      // AQUI DEBO GUARDAR UN ARREGLO DE invoiceNumberId
+      // Luego crear varias promesas que se ejecuten juntas
+      // Luego, filtrar para obtener los datos correctos,
+      // segun el invoice (ejemplo, CD99045437)
       const link: string = jsonResponse.invoices[0].links[0].uri;
       invoiceNumberId = link.split('/').pop();
     }
