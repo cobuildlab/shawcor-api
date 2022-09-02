@@ -112,6 +112,8 @@ export class EnverusAPI {
     const textResponseInvoice = await responseInvoice.text();
     const jsonresponseInvoice = fxp.parse(textResponseInvoice);
 
+    log(`jsonresponseInvoice: ${JSON.stringify(jsonresponseInvoice, null, 2)}`);
+
     const lineItems =
       jsonresponseInvoice['pidx:InvoiceResponse'][
         'pidx:InvoiceResponseDetails'
