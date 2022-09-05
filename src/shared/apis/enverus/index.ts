@@ -78,6 +78,8 @@ export class EnverusAPI {
 
       if (lineItemsStatuses.some((lis) => lis === 'Reject'))
         statusInvoice = 'Reject';
+      else if (lineItemsStatuses.every((lis) => lis === 'Pending'))
+        statusInvoice = 'Pending';
 
       return {
         invoiceId: responseInvoiceId,
