@@ -146,11 +146,11 @@ export class EnverusAPI {
         return [undefined, Error('Not found invoice Id')];
       }
 
-      const links: { uri: string }[] = jsonResponse.invoices[0].links;
+      const linkList: { links: { uri: string }[] }[] = jsonResponse.invoices;
       const promises: Promise<FetchStatusResponseType>[] = [];
 
-      for (const link of links) {
-        const numberId = link.uri.split('/').pop();
+      for (const link of linkList) {
+        const numberId = link.links[0].uri.split('/').pop();
         if (numberId) {
           promises.push(this._fetchStatus(invoiceId, numberId));
         }
@@ -159,6 +159,7 @@ export class EnverusAPI {
       let responseList: FetchStatusResponseType[] = [];
       try {
         responseList = await Promise.all(promises);
+        responseList = responseList.filter((rl) => rl);
         log(`DEBUG: RESULTS PROMISES: ${JSON.stringify(responseList)}`);
       } catch (errorResults) {
         log('ERROR results promise.All');
