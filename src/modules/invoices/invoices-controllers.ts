@@ -28,14 +28,27 @@ export const syncInvoiceToEnverus = expressAsyncWrapper(
 export const statusInvoice = expressAsyncWrapper(async (request, response) => {
   log(`statusInvoice query params: ${JSON.stringify(request.query, null, 2)}`);
 
-  const { dunsBuyer, submittedDate, invoiceId } =
+  const { dunsBuyer, submittedDate, invoiceId, enverusInvoiceId } =
     request.query as FetchStatusBody;
+
+  if (!invoiceId) {
+    return response.status(400).json({ message: 'require invoiceId' });
+  }
+
+  if (!submittedDate) {
+    return response.status(400).json({ message: 'require submittedDate' });
+  }
+
+  if (!dunsBuyer) {
+    return response.status(400).json({ message: 'require dunsBuyer' });
+  }
 
   const clientEnverus = new EnverusAPI();
   const [statusInvoiceResponse, error] = await clientEnverus.fetchStatusInvoice(
     dunsBuyer,
     submittedDate,
     invoiceId,
+    enverusInvoiceId,
   );
 
   await flush();

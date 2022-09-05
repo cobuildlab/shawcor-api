@@ -87,10 +87,11 @@ export type InvoiceBody = {
 export type FetchStatusBody = {
   dunsBuyer: string;
   submittedDate: string;
-  invoiceId?: string;
+  invoiceId: string;
+  enverusInvoiceId?: string;
 };
 
 export type FetchStatusInvoiceResponse = {
-  invoiceId: string;
+  enverusInvoiceId: string;
   status: string;
 };
