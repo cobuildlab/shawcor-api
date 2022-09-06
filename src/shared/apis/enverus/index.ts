@@ -87,7 +87,7 @@ export class EnverusAPI {
         status: statusInvoice,
       };
     }
-    return;
+    return undefined;
   };
   /**
    * Method for fetch invoice status.
@@ -103,7 +103,6 @@ export class EnverusAPI {
     invoiceId: string,
     enverusInvoiceId: string | undefined,
   ): Promise<[FetchStatusInvoiceResponse, undefined] | [undefined, Error]> => {
-    let statusInvoice = '';
     let enverusInvoiceNumber = enverusInvoiceId;
 
     if (!enverusInvoiceNumber) {
@@ -180,65 +179,24 @@ export class EnverusAPI {
       await flush();
       return [undefined, Error('Not found invoice Id')];
     } else {
-      const [responseInvoice, errorInvoice] = await handleTryCatch(
-        fetch(
-          `${PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE}/${enverusInvoiceNumber}`,
+      const response: FetchStatusResponseType = await this._fetchStatus(
+        invoiceId,
+        enverusInvoiceNumber,
+      );
+
+      if (response) {
+        return [
           {
-            method: 'GET',
-            agent: new https.Agent({
-              pfx: fs.readFileSync(PATH_PFX),
-              passphrase: PASSPHRASE,
-            }),
-            headers: {
-              'Content-Type': 'application/xml',
-            },
+            enverusInvoiceId: response.enverusInvoiceId as string,
+            status: response.status as string,
           },
-        ),
-      );
-
-      if (errorInvoice) {
-        log(
-          `ERROR fetchStatusInvoice(Enverus): ${
-            typeof errorInvoice === 'string'
-              ? errorInvoice
-              : JSON.stringify(errorInvoice)
-          }`,
-        );
-        await flush();
-        return [undefined, errorInvoice];
+          undefined,
+        ];
       }
 
-      const textResponseInvoice = await responseInvoice.text();
-      const jsonresponseInvoice = fxp.parse(textResponseInvoice);
-
-      log(
-        `jsonresponseInvoice: ${JSON.stringify(jsonresponseInvoice, null, 2)}`,
-      );
-
-      const lineItems =
-        jsonresponseInvoice['pidx:InvoiceResponse'][
-          'pidx:InvoiceResponseDetails'
-        ]['pidx:InvoiceResponseLineItem'];
-
-      let lineItemsStatuses: string[] = [];
-      if (Array.isArray(lineItems)) {
-        lineItemsStatuses = lineItems.map(
-          (li: { 'pidx:LineStatusCode': string }) => li['pidx:LineStatusCode'],
-        );
-      } else {
-        lineItemsStatuses.push(lineItems['pidx:LineStatusCode']);
-      }
-
-      if (lineItemsStatuses.some((lis) => lis === 'Reject'))
-        statusInvoice = 'Reject';
-
-      return [
-        {
-          enverusInvoiceId: enverusInvoiceNumber,
-          status: statusInvoice,
-        },
-        undefined,
-      ];
+      log('ERROR fetchStatusInvoice(Enverus): Not found invoice id');
+      await flush();
+      return [undefined, Error('Not found invoice Id')];
     }
   };
 
