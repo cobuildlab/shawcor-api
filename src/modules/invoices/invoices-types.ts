@@ -77,6 +77,7 @@ export type InvoiceType = EntityBaseType & {
   afe: string;
   ticket: string;
   purchaseOrder: string;
+  priceBook: string;
 };
 
 export type InvoiceBody = {

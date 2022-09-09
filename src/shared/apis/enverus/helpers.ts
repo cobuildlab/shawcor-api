@@ -100,6 +100,18 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
             `
     : ''
 }
+            ${
+  invoice.priceBook
+    ? `
+              <pidx:ReferenceInformation referenceInformationIndicator="ContractNumber">
+                <pidx:ReferenceNumber>${xmlescape(
+    invoice.priceBook,
+  )}</pidx:ReferenceNumber>
+              </pidx:ReferenceInformation>
+            `
+    : ''
+}
+
             <pidx:Attachment>
               <pidx:AttachmentPurposeCode>Other</pidx:AttachmentPurposeCode>
               <pidx:AttachmentTitle>${
@@ -109,7 +121,21 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
   invoice.invoiceId
 }.pdf</pidx:AttachmentDescription>
               <pidx:AttachmentLocation>cid:Attachment1</pidx:AttachmentLocation>
-          </pidx:Attachment>
+            </pidx:Attachment>
+
+            ${
+  invoice.approver || invoice.workLocation
+    ? `
+              <pidx:Comment>${
+  invoice.approver ? `Approver: ${invoice.approver}` : ''
+}${invoice.approver ? ' - ' : ''}${
+  invoice.workLocation
+    ? `Work location: ${invoice.workLocation}`
+    : ''
+}</pidx:Comment>
+            `
+    : ''
+}
         </pidx:InvoiceProperties>
         ${
   invoice.invoiceLinesRelation?.items !== undefined &&
