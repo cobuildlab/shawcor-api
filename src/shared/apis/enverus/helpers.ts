@@ -136,8 +136,6 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
             `
     : ''
 }
-
-            <pidx:Comment>Approver: Melissa Halaska. Work Location: Estevan, SK</pidx:Comment>
         </pidx:InvoiceProperties>
         ${
   invoice.invoiceLinesRelation?.items !== undefined &&
