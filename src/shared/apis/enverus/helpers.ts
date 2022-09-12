@@ -36,12 +36,12 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
             <!-- BUYER information -->
             <pidx:PartnerInformation partnerRoleIndicator="BillTo">
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">${
-  invoice.customer.duns
-}</pidx:PartnerIdentifier>
+                  invoice.customer.duns
+                }</pidx:PartnerIdentifier>
                 <pidx:ContactInformation contactInformationIndicator="BuyerDepartment">
                     <pidx:ContactName>${xmlescape(
-    getSite(invoice.customer.name),
-  )}</pidx:ContactName>
+                      getSite(invoice.customer.name),
+                    )}</pidx:ContactName>
                 </pidx:ContactInformation>
             </pidx:PartnerInformation>
             <!-- SUPPLIER information -->
@@ -49,136 +49,136 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">249054263</pidx:PartnerIdentifier>
             </pidx:PartnerInformation>
             ${
-  invoice.purchaseOrder
-    ? `
+              invoice.purchaseOrder
+                ? `
               <!--Optional for OpenInvoice, may be required by the buyer-->
               <pidx:PurchaseOrderInformation>
                 <pidx:PurchaseOrderNumber>${invoice.purchaseOrder}</pidx:PurchaseOrderNumber>
               </pidx:PurchaseOrderInformation>
             `
-    : ''
-}
+                : ''
+            }
             <!--Required for OpenInvoice-->
             <pidx:PrimaryCurrency>
                 <pidx:CurrencyCode>${invoice.currency}</pidx:CurrencyCode>
             </pidx:PrimaryCurrency>
             ${
-  invoice.wellLocation
-    ? `
+              invoice.wellLocation
+                ? `
               <!--Optional for OpenInvoice, may be required by the buyer-->
               <pidx:JobLocationInformation>
                 <pidx:WellInformation>
                   <pidx:WellIdentifier>${xmlescape(
-    invoice.wellLocation,
-  )}</pidx:WellIdentifier>
+                    invoice.wellLocation,
+                  )}</pidx:WellIdentifier>
                 </pidx:WellInformation>
               </pidx:JobLocationInformation>
             `
-    : ''
-}
+                : ''
+            }
             <!--Optional for OpenInvoice, may be required by the buyer-->
             <!--ReferenceInformation at the header (as well as PO, Field Ticket, Location and Service Datetime) will be mapped to all line items that do not have their own ReferenceInformation specified. For example, (1) a single AFE specified at the header will apply to the entire invoice, (2) each line item may have its own AFE specified, or (3) a header AFE applies to all line items without their own AFEs.-->
             ${
-  invoice.afe
-    ? `
+              invoice.afe
+                ? `
               <pidx:ReferenceInformation referenceInformationIndicator="AFENumber">
                 <pidx:ReferenceNumber>${xmlescape(
-    invoice.afe,
-  )}</pidx:ReferenceNumber>
+                  invoice.afe,
+                )}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
-    : ''
-}
+                : ''
+            }
             ${
-  invoice.costCenter
-    ? `
+              invoice.costCenter
+                ? `
               <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
                 <pidx:ReferenceNumber>${xmlescape(
-    invoice.costCenter,
-  )}</pidx:ReferenceNumber>
+                  invoice.costCenter,
+                )}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
-    : ''
-}
+                : ''
+            }
             ${
-  invoice.priceBook
-    ? `
+              invoice.priceBook
+                ? `
               <pidx:ReferenceInformation referenceInformationIndicator="ContractNumber">
                 <pidx:ReferenceNumber>${xmlescape(
-    invoice.priceBook,
-  )}</pidx:ReferenceNumber>
+                  invoice.priceBook,
+                )}</pidx:ReferenceNumber>
               </pidx:ReferenceInformation>
             `
-    : ''
-}
+                : ''
+            }
 
             <pidx:Attachment>
               <pidx:AttachmentPurposeCode>Other</pidx:AttachmentPurposeCode>
               <pidx:AttachmentTitle>${
-  invoice.invoiceId
-}.pdf</pidx:AttachmentTitle>
+                invoice.invoiceId
+              }.pdf</pidx:AttachmentTitle>
               <pidx:AttachmentDescription>${
-  invoice.invoiceId
-}.pdf</pidx:AttachmentDescription>
+                invoice.invoiceId
+              }.pdf</pidx:AttachmentDescription>
               <pidx:AttachmentLocation>cid:Attachment1</pidx:AttachmentLocation>
             </pidx:Attachment>
 
             ${
-  invoice.approver || invoice.workLocation
-    ? `
+              invoice.approver || invoice.workLocation
+                ? `
               <pidx:Comment>${
-  invoice.approver ? `Approver: ${invoice.approver}` : ''
-}${invoice.approver ? ' - ' : ''}${
-  invoice.workLocation
-    ? `Work location: ${invoice.workLocation}`
-    : ''
-}</pidx:Comment>
-            `
-    : ''
-}
+                invoice.approver ? `Approver: ${invoice.approver}` : ''
+              }${invoice.approver ? ' - ' : ''}${
+                    invoice.workLocation
+                      ? `Work location: ${invoice.workLocation}`
+                      : ''
+                  }</pidx:Comment>
+                 `
+                : ''
+            }
         </pidx:InvoiceProperties>
         ${
-  invoice.invoiceLinesRelation?.items !== undefined &&
+          invoice.invoiceLinesRelation?.items !== undefined &&
           invoice.invoiceLinesRelation?.items.length > 0 &&
           `
           <pidx:InvoiceDetails>
           ${invoice.invoiceLinesRelation?.items
-    .map(
-      (lineItem, index) =>
-        `
+            .map(
+              (lineItem, index) =>
+                `
               <pidx:InvoiceLineItem>
                 <pidx:LineItemNumber>${index + 1}</pidx:LineItemNumber>
                 <pidx:InvoiceQuantity>
                     <pidx:Quantity>${lineItem.quantity}</pidx:Quantity>
                     <pidx:UnitOfMeasureCode>${
-  lineItem.uom
-}</pidx:UnitOfMeasureCode>
+                      lineItem.uom
+                    }</pidx:UnitOfMeasureCode>
                 </pidx:InvoiceQuantity>
                 <pidx:LineItemInformation>
                     <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">MC-MSC</pidx:LineItemIdentifier>
                     <pidx:LineItemDescription>${xmlescape(
-    lineItem.description,
-  )}</pidx:LineItemDescription>
+                      lineItem.description,
+                    )}</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
                 ${
-  invoice.purchaseOrder
-    ? `
+                  invoice.purchaseOrder
+                    ? `
                   <pidx:PurchaseOrderLineItemNumber>${invoice.purchaseOrder}</pidx:PurchaseOrderLineItemNumber>
                 `
-    : ''
-}
+                    : ''
+                }
                 <pidx:Pricing>
                     <pidx:UnitPrice>
                         <pidx:MonetaryAmount>${
-  lineItem.unitPrice
-}</pidx:MonetaryAmount>
+                          lineItem.unitPrice
+                        }</pidx:MonetaryAmount>
                         <pidx:UnitOfMeasureCode>${
-  lineItem.uom
-}</pidx:UnitOfMeasureCode>
+                          lineItem.uom
+                        }</pidx:UnitOfMeasureCode>
                     </pidx:UnitPrice>
                 </pidx:Pricing>
                 ${
-  lineItem.taxLinesRelation?.items !== undefined &&
+                  lineItem.taxLinesRelation?.items !== undefined &&
                   lineItem.taxLinesRelation?.items.length > 0 &&
                   lineItem.taxLinesRelation?.items
                     .map(
@@ -187,58 +187,58 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                     <!--All PIDX TaxTypeCodes EXCEPT 'Other' are supported.-->
                     <pidx:Tax>
                       <pidx:TaxTypeCode>${getTaxTypeCode(
-    taxLine.taxCode,
-  )}</pidx:TaxTypeCode>
+                        taxLine.taxCode,
+                      )}</pidx:TaxTypeCode>
                       <pidx:TaxRate>${taxLine.taxPercentage}</pidx:TaxRate>
                       <pidx:TaxAmount>
                         <pidx:MonetaryAmount>${
-  taxLine.taxAmount
-}</pidx:MonetaryAmount>
+                          taxLine.taxAmount
+                        }</pidx:MonetaryAmount>
                       </pidx:TaxAmount>
                     </pidx:Tax>
                     `,
                     )
                     .join('')
-}
+                }
                 <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodStart">${
-  invoice.invoiceDate
-}T00:00:00Z</pidx:ServiceDateTime>
+                  invoice.invoiceDate
+                }T00:00:00Z</pidx:ServiceDateTime>
                 <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodEnd">${
-  invoice.invoiceDate
-}T00:00:00Z</pidx:ServiceDateTime>
+                  invoice.invoiceDate
+                }T00:00:00Z</pidx:ServiceDateTime>
                 ${
-  invoice.afe
-    ? `
+                  invoice.afe
+                    ? `
                   <pidx:ReferenceInformation referenceInformationIndicator="AFENumber">
                     <pidx:ReferenceNumber>${xmlescape(
-    invoice.afe,
-  )}</pidx:ReferenceNumber>
+                      invoice.afe,
+                    )}</pidx:ReferenceNumber>
                   </pidx:ReferenceInformation>
                 `
-    : ''
-}
+                    : ''
+                }
                 ${
-  invoice.costCenter
-    ? `
+                  invoice.costCenter
+                    ? `
                   <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
                     <pidx:ReferenceNumber>${xmlescape(
-    invoice.costCenter,
-  )}</pidx:ReferenceNumber>
+                      invoice.costCenter,
+                    )}</pidx:ReferenceNumber>
                   </pidx:ReferenceInformation>
                 `
-    : ''
-}
+                    : ''
+                }
               </pidx:InvoiceLineItem>
               `,
-    )
-    .join('')}
+            )
+            .join('')}
           </pidx:InvoiceDetails>
           `
-}
+        }
         <pidx:InvoiceSummary>
             <pidx:TotalLineItems>${
-  invoice.invoiceLinesRelation?.count
-}</pidx:TotalLineItems>
+              invoice.invoiceLinesRelation?.count
+            }</pidx:TotalLineItems>
             <pidx:InvoiceTotal>
                 <pidx:MonetaryAmount>${invoice.total}</pidx:MonetaryAmount>
             </pidx:InvoiceTotal>
