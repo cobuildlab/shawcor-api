@@ -16,7 +16,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
-    indent: ['error', 2],
+    indent: ['error', 2, { ignoredNodes: ['TemplateLiteral *'] }],
     semi: [2, 'always'],
     'no-console': ['error', { allow: ['warn', 'error', 'log'] }],
     'jsdoc/require-description-complete-sentence': 2,
