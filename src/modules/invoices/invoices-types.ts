@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { AddressType, EntityBaseType } from '../../shared/types';
 
 export type CustomerType = EntityBaseType & {
@@ -22,12 +23,15 @@ export type CustomerType = EntityBaseType & {
   paidInvoices?: { count: number };
 };
 
-export type InvoiceStatusType =
-  | 'approved'
-  | 'rejected'
-  | 'submitted'
-  | 'unsubmitted'
-  | 'paid';
+export enum InvoiceStatusEnum {
+  approved = 'approved',
+  rejected = 'rejected',
+  submitted = 'submitted',
+  unsubmitted = 'unsubmitted',
+  paid = 'paid',
+}
+
+export type InvoiceStatusType = `${InvoiceStatusEnum}`;
 
 export type InvoiceTaxLineType = EntityBaseType & {
   taxAmount: number;
