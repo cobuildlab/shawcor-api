@@ -14,9 +14,11 @@ import {
 } from '../../constants';
 import {
   FetchStatusInvoiceResponse,
+  InvoiceStatusEnum,
   InvoiceType,
 } from '../../../modules/invoices/invoices-types';
 import { getInvoiceBodyXML } from './helpers';
+import { EnverusInvoiceStatusEnum } from './types';
 
 type FetchStatusResponseType =
   | {
@@ -76,10 +78,16 @@ export class EnverusAPI {
         lineItemsStatuses.push(lineItems['pidx:LineStatusCode']);
       }
 
-      if (lineItemsStatuses.some((lis) => lis === 'Reject'))
-        statusInvoice = 'Reject';
-      else if (lineItemsStatuses.every((lis) => lis === 'Pending'))
-        statusInvoice = 'Pending';
+      if (
+        lineItemsStatuses.some((lis) => lis === EnverusInvoiceStatusEnum.reject)
+      )
+        statusInvoice = InvoiceStatusEnum.rejected;
+      else if (
+        lineItemsStatuses.every(
+          (lis) => lis === EnverusInvoiceStatusEnum.pending,
+        )
+      )
+        statusInvoice = InvoiceStatusEnum.submitted;
 
       return {
         invoiceId: responseInvoiceId,
