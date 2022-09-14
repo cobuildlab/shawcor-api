@@ -80,14 +80,21 @@ export class EnverusAPI {
 
       if (
         lineItemsStatuses.some((lis) => lis === EnverusInvoiceStatusEnum.reject)
-      )
+      ) {
         statusInvoice = InvoiceStatusEnum.rejected;
-      else if (
+      } else if (
         lineItemsStatuses.every(
           (lis) => lis === EnverusInvoiceStatusEnum.pending,
         )
-      )
+      ) {
         statusInvoice = InvoiceStatusEnum.submitted;
+      } else if (
+        lineItemsStatuses.every(
+          (lis) => lis === EnverusInvoiceStatusEnum.accept,
+        )
+      ) {
+        statusInvoice = InvoiceStatusEnum.approved;
+      }
 
       return {
         invoiceId: responseInvoiceId,
