@@ -156,9 +156,7 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 </pidx:InvoiceQuantity>
                 <pidx:LineItemInformation>
                     <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">MC-MSC</pidx:LineItemIdentifier>
-                    <pidx:LineItemDescription>${xmlescape(
-                      lineItem.description,
-                    )}</pidx:LineItemDescription>
+                    <pidx:LineItemDescription>Miscellaneous Charge-Miscellaneous Charges</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
                 ${
                   invoice.purchaseOrder
