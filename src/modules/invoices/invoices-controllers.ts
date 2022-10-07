@@ -7,14 +7,18 @@ export const syncInvoiceToEnverus = expressAsyncWrapper(
   async (request, response) => {
     log(`syncInvoiceToEnverus: ${JSON.stringify(request.body, null, 2)}`);
 
-    const { invoice, file }: InvoiceBody = request.body;
+    const { invoice, file, environment }: InvoiceBody = request.body;
 
     const fileResponse = await fetchFileByUrl(file);
     // ENCODE TO BASE 64
     const fileBase64 = (await fileResponse.buffer()).toString('base64');
 
     const clientEnverus = new EnverusAPI();
-    const [, error] = await clientEnverus.syncInvoice(invoice, fileBase64);
+    const [, error] = await clientEnverus.syncInvoice(
+      invoice,
+      fileBase64,
+      environment,
+    );
 
     await flush();
 
