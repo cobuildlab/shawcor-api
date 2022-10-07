@@ -7,6 +7,11 @@ export enum UserRoleEnum {
   APP_USER = 'APP_USER',
 }
 
+export enum EnvironmentEnum {
+  Master = 'Master',
+  Main = 'main',
+}
+
 export type UserRoleType = keyof typeof UserRoleEnum;
 
 export type UserType = {

@@ -87,6 +87,7 @@ export type InvoiceType = EntityBaseType & {
 export type InvoiceBody = {
   invoice: InvoiceType;
   file: string;
+  environment: string;
 };
 
 export type FetchStatusBody = {

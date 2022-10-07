@@ -1,5 +1,19 @@
 import { InvoiceType } from '../../../modules/invoices/invoices-types';
+import {
+  PATH_MASTER_POST_INVOICE_OPEN_INVOICE,
+  PATH_POST_INVOICE_OPEN_INVOICE,
+} from '../../constants';
+import { EnvironmentEnum } from '../../types';
 const xmlescape = require('escape-xml');
+
+export const getApiUrl = (environment: string) => {
+  if (environment === EnvironmentEnum.Main) {
+    return PATH_POST_INVOICE_OPEN_INVOICE;
+  } else if (environment === EnvironmentEnum.Master) {
+    return PATH_MASTER_POST_INVOICE_OPEN_INVOICE;
+  }
+  return '';
+};
 
 const getSite = (customerName: string): string => {
   if (customerName.toLowerCase().includes('baytex energy'))

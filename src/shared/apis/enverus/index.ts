@@ -8,7 +8,6 @@ import { handleTryCatch } from '../../utils';
 import { log, flush } from '../../logger';
 import {
   PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE,
-  PATH_POST_INVOICE_OPEN_INVOICE,
   PATH_PFX,
   PASSPHRASE,
 } from '../../constants';
@@ -17,7 +16,7 @@ import {
   InvoiceStatusEnum,
   InvoiceType,
 } from '../../../modules/invoices/invoices-types';
-import { getInvoiceBodyXML } from './helpers';
+import { getApiUrl, getInvoiceBodyXML } from './helpers';
 import { EnverusInvoiceStatusEnum } from './types';
 
 type FetchStatusResponseType =
@@ -220,10 +219,12 @@ export class EnverusAPI {
    *
    * @param invoice - Invoice data from 8base DB.
    * @param file - Invoice file from 8base DB (base 64).
+   * @param environment - Environment name.
    */
   syncInvoice = async (
     invoice: InvoiceType,
     file: string,
+    environment: string,
   ): Promise<[Response, undefined] | [undefined, Error]> => {
     const bodyXML = getInvoiceBodyXML(invoice);
 
@@ -240,7 +241,7 @@ export class EnverusAPI {
     });
 
     const [result, error] = await handleTryCatch(
-      fetch(PATH_POST_INVOICE_OPEN_INVOICE, {
+      fetch(getApiUrl(environment), {
         method: 'POST',
         agent: new https.Agent({
           pfx: fs.readFileSync(PATH_PFX),
