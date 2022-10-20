@@ -9,11 +9,6 @@ type AsyncFunction = (
   res: Response,
   next: NextFunction,
 ) => Promise<Response>;
-type ResponseFunction = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => void;
 
 /**
  * Wraps an asyncronous function in order to catch any errors and pass them to the Express middleware.

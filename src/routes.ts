@@ -4,12 +4,12 @@ const router = express.Router();
 import {
   statusApi,
   statusInvoice,
-  syncInvoiceToEnverus,
+  syncInvoice,
 } from './modules/invoices/invoices-controllers';
 
 router.get('/status', statusApi);
 router.get('/status-invoice', statusInvoice);
-router.post('/sync-invoice', syncInvoiceToEnverus);
+router.post('/sync-invoice', syncInvoice);
 
 router
   .route('*')
