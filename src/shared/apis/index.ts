@@ -54,8 +54,6 @@ export const syncInvoiceToApi = async (
     const fileBase64 = (await fileResponse.buffer()).toString('base64');
 
     const clientEnverus = new EnverusOpenInvoiceAPI();
-    await clientEnverus.syncInvoice(invoice, fileBase64, environment);
-
     const [response, error] = await clientEnverus.syncInvoice(
       invoice,
       fileBase64,
