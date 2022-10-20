@@ -2,7 +2,7 @@ import { log, flush } from '../../shared/logger';
 import { expressAsyncWrapper } from '../../shared/utils';
 import { InvoiceBody } from './invoices-types';
 import { fetchStatusInvoiceFromApi, syncInvoiceToApi } from '../../shared/apis';
-import { ApiNameEnum, FetchStatusBody } from '../../shared/apis/types';
+import { FetchStatusBody } from '../../shared/apis/types';
 
 export const syncInvoice = expressAsyncWrapper(async (request, response) => {
   log(`syncInvoiceToEnverus: ${JSON.stringify(request.body, null, 2)}`);
@@ -20,6 +20,10 @@ export const syncInvoice = expressAsyncWrapper(async (request, response) => {
     return response.status(400).json({ message: error.message });
   }
 
+  if (responseSync === undefined) {
+    return response.status(400).json({ message: 'Empty response' });
+  }
+
   const responseSyncText = await responseSync?.text();
 
   return response
@@ -31,7 +35,11 @@ export const statusInvoice = expressAsyncWrapper(async (request, response) => {
   log(`statusInvoice query params: ${JSON.stringify(request.query, null, 2)}`);
 
   const paramFilter = request.query as FetchStatusBody;
-  const { dunsBuyer, submittedDate, invoiceId } = paramFilter;
+  const { nameApi, dunsBuyer, submittedDate, invoiceId } = paramFilter;
+
+  if (!nameApi) {
+    return response.status(400).json({ message: 'require nameApi' });
+  }
 
   if (!invoiceId) {
     return response.status(400).json({ message: 'require invoiceId' });
@@ -45,9 +53,8 @@ export const statusInvoice = expressAsyncWrapper(async (request, response) => {
     return response.status(400).json({ message: 'require dunsBuyer' });
   }
 
-  // TODO: Send nameApi from functions
   const [responseStatus, error] = await fetchStatusInvoiceFromApi(
-    ApiNameEnum.EnverusOpenInvoice,
+    nameApi,
     paramFilter,
   );
 
@@ -56,6 +63,11 @@ export const statusInvoice = expressAsyncWrapper(async (request, response) => {
   if (error) {
     return response.status(400).json({ message: error.message });
   }
+
+  if (responseStatus === undefined) {
+    return response.status(400).json({ message: 'Empty response' });
+  }
+
   return response
     .status(200)
     .json({ message: 'Fetch status', ...responseStatus });

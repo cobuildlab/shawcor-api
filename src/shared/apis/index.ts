@@ -9,7 +9,7 @@ import {
 } from './types';
 
 export const fetchStatusInvoiceFromApi = async (
-  nameApi: ApiNameEnum,
+  nameApi: `${ApiNameEnum}`,
   paramsFilter: FetchStatusBody,
 ): Promise<
   | [FetchStatusInvoiceResponse, undefined]

@@ -8,6 +8,7 @@ export enum ApiNameEnum {
 }
 
 export type FetchStatusBody = {
+  nameApi: `${ApiNameEnum}`;
   dunsBuyer: string;
   submittedDate: string;
   invoiceId: string;
