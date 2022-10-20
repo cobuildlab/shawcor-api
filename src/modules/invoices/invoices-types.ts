@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { ApiNameEnum } from '../../shared/apis/types';
 import { AddressType, EntityBaseType } from '../../shared/types';
 
 export type CustomerType = EntityBaseType & {
@@ -82,22 +83,11 @@ export type InvoiceType = EntityBaseType & {
   ticket: string;
   purchaseOrder: string;
   priceBook: string;
+  portalSync: `${ApiNameEnum}`;
 };
 
 export type InvoiceBody = {
   invoice: InvoiceType;
   file: string;
   environment: string;
-};
-
-export type FetchStatusBody = {
-  dunsBuyer: string;
-  submittedDate: string;
-  invoiceId: string;
-  enverusInvoiceId?: string;
-};
-
-export type FetchStatusInvoiceResponse = {
-  enverusInvoiceId: string;
-  status: string;
 };

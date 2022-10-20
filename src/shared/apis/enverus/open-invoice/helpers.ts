@@ -1,10 +1,12 @@
-import { InvoiceType } from '../../../modules/invoices/invoices-types';
+const xmlescape = require('escape-xml');
+
+import { InvoiceType } from '../../../../modules/invoices/invoices-types';
 import {
   PATH_MASTER_POST_INVOICE_OPEN_INVOICE,
   PATH_POST_INVOICE_OPEN_INVOICE,
-} from '../../constants';
-import { EnvironmentEnum } from '../../types';
-const xmlescape = require('escape-xml');
+} from '../../../constants';
+import { EnvironmentEnum } from '../../../types';
+import { getInvoiceTypeCode, getTaxTypeCode } from '../../helpers';
 
 export const getApiUrl = (environment: string) => {
   if (environment === EnvironmentEnum.Main) {
@@ -15,7 +17,7 @@ export const getApiUrl = (environment: string) => {
   return '';
 };
 
-const getSite = (customerName: string): string => {
+export const getSite = (customerName: string): string => {
   if (customerName.toLowerCase().includes('baytex energy'))
     return 'Accounts Payable - Canada G to N';
   else if (customerName.toLowerCase().includes('crescent point resources'))
@@ -27,14 +29,6 @@ const getSite = (customerName: string): string => {
   return '';
 };
 
-const getTaxTypeCode = (taxCode: string): string => {
-  if (taxCode === 'GST') {
-    return 'GoodsAndServicesTax';
-  }
-
-  return 'StateProvincialTax';
-};
-
 /**
  * To generate request body to synchronize invoice.
  *
@@ -42,6 +36,8 @@ const getTaxTypeCode = (taxCode: string): string => {
  * @returns - Request body content, in XML format.
  */
 export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
+  const invoiceTypeCode = getInvoiceTypeCode(invoice.invoiceId);
+
   const invoiceBody = `<?xml version="1.0" encoding="UTF-8" ?>
     <pidx:Invoice pidx:transactionPurposeIndicator="Original" pidx:version="1.0" xmlns:pidx="http://www.api.org/pidXML/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.api.org/pidXML/v1.0 http://banff.digitaloilfield.com/XML/OI-PIDX-Invoice.xsd">
         <pidx:InvoiceProperties>
@@ -70,6 +66,11 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:PurchaseOrderNumber>${invoice.purchaseOrder}</pidx:PurchaseOrderNumber>
               </pidx:PurchaseOrderInformation>
             `
+                : ''
+            }
+            ${
+              invoiceTypeCode
+                ? `<pidx:InvoiceTypeCode>${invoiceTypeCode}</pidx:InvoiceTypeCode>`
                 : ''
             }
             <!--Required for OpenInvoice-->

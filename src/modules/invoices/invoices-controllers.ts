@@ -1,39 +1,37 @@
 import { log, flush } from '../../shared/logger';
-import { EnverusAPI } from '../../shared/apis/enverus';
-import { expressAsyncWrapper, fetchFileByUrl } from '../../shared/utils';
-import { FetchStatusBody, InvoiceBody } from './invoices-types';
+import { expressAsyncWrapper } from '../../shared/utils';
+import { InvoiceBody } from './invoices-types';
+import { fetchStatusInvoiceFromApi, syncInvoiceToApi } from '../../shared/apis';
+import { ApiNameEnum, FetchStatusBody } from '../../shared/apis/types';
 
-export const syncInvoiceToEnverus = expressAsyncWrapper(
-  async (request, response) => {
-    log(`syncInvoiceToEnverus: ${JSON.stringify(request.body, null, 2)}`);
+export const syncInvoice = expressAsyncWrapper(async (request, response) => {
+  log(`syncInvoiceToEnverus: ${JSON.stringify(request.body, null, 2)}`);
 
-    const { invoice, file, environment }: InvoiceBody = request.body;
+  const { invoice, file, environment }: InvoiceBody = request.body;
+  const [responseSync, error] = await syncInvoiceToApi(
+    invoice,
+    file,
+    environment,
+  );
 
-    const fileResponse = await fetchFileByUrl(file);
-    // ENCODE TO BASE 64
-    const fileBase64 = (await fileResponse.buffer()).toString('base64');
+  await flush();
 
-    const clientEnverus = new EnverusAPI();
-    const [, error] = await clientEnverus.syncInvoice(
-      invoice,
-      fileBase64,
-      environment,
-    );
+  if (error) {
+    return response.status(400).json({ message: error.message });
+  }
 
-    await flush();
+  const responseSyncText = await responseSync?.text();
 
-    if (error) {
-      return response.status(400).json({ message: error.message });
-    }
-    return response.status(200).json({ message: 'Invoice synced to Enverus' });
-  },
-);
+  return response
+    .status(200)
+    .json({ message: responseSyncText || 'Invoice synced to Enverus' });
+});
 
 export const statusInvoice = expressAsyncWrapper(async (request, response) => {
   log(`statusInvoice query params: ${JSON.stringify(request.query, null, 2)}`);
 
-  const { dunsBuyer, submittedDate, invoiceId, enverusInvoiceId } =
-    request.query as FetchStatusBody;
+  const paramFilter = request.query as FetchStatusBody;
+  const { dunsBuyer, submittedDate, invoiceId } = paramFilter;
 
   if (!invoiceId) {
     return response.status(400).json({ message: 'require invoiceId' });
@@ -47,12 +45,10 @@ export const statusInvoice = expressAsyncWrapper(async (request, response) => {
     return response.status(400).json({ message: 'require dunsBuyer' });
   }
 
-  const clientEnverus = new EnverusAPI();
-  const [statusInvoiceResponse, error] = await clientEnverus.fetchStatusInvoice(
-    dunsBuyer,
-    submittedDate,
-    invoiceId,
-    enverusInvoiceId,
+  // TODO: Send nameApi from functions
+  const [responseStatus, error] = await fetchStatusInvoiceFromApi(
+    ApiNameEnum.EnverusOpenInvoice,
+    paramFilter,
   );
 
   await flush();
@@ -62,7 +58,7 @@ export const statusInvoice = expressAsyncWrapper(async (request, response) => {
   }
   return response
     .status(200)
-    .json({ message: 'Fetch status', ...statusInvoiceResponse });
+    .json({ message: 'Fetch status', ...responseStatus });
 });
 
 export const statusApi = expressAsyncWrapper(async (request, response) => {

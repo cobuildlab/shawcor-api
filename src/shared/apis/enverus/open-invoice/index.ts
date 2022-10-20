@@ -4,30 +4,22 @@ import * as fs from 'fs';
 import * as fxp from 'fast-xml-parser';
 const FormData = require('form-data');
 
-import { handleTryCatch } from '../../utils';
-import { log, flush } from '../../logger';
+import {
+  InvoiceStatusEnum,
+  InvoiceType,
+} from '../../../../modules/invoices/invoices-types';
 import {
   PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE,
   PATH_PFX,
   PASSPHRASE,
-} from '../../constants';
-import {
-  FetchStatusInvoiceResponse,
-  InvoiceStatusEnum,
-  InvoiceType,
-} from '../../../modules/invoices/invoices-types';
+} from '../../../constants';
+import { log, flush } from '../../../logger';
+import { handleTryCatch } from '../../../utils';
+import { FetchStatusInvoiceResponse } from '../../types';
 import { getApiUrl, getInvoiceBodyXML } from './helpers';
-import { EnverusInvoiceStatusEnum } from './types';
+import { EnverusInvoiceStatusEnum, FetchStatusResponseType } from './types';
 
-type FetchStatusResponseType =
-  | {
-      invoiceId: string;
-      enverusInvoiceId: string;
-      status: string;
-    }
-  | undefined;
-
-export class EnverusAPI {
+export class EnverusOpenInvoiceAPI {
   _fetchStatus = async (
     invoiceId: string,
     numberId: string,
