@@ -14,8 +14,6 @@ export const syncInvoice = expressAsyncWrapper(async (request, response) => {
     environment,
   );
 
-  await flush();
-
   if (error) {
     return response.status(400).json({ message: error.message });
   }
@@ -24,11 +22,11 @@ export const syncInvoice = expressAsyncWrapper(async (request, response) => {
     return response.status(400).json({ message: 'Empty response' });
   }
 
-  const responseSyncText = await responseSync?.text();
+  log(`responseSync: ${JSON.stringify(responseSync, null, 2)}`);
 
-  return response
-    .status(200)
-    .json({ message: responseSyncText || 'Invoice synced to Enverus' });
+  await flush();
+
+  return response.status(200).json({ message: 'Invoice synced to Enverus' });
 });
 
 export const statusInvoice = expressAsyncWrapper(async (request, response) => {
