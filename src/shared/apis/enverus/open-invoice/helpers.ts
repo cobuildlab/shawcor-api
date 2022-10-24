@@ -170,8 +170,14 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                     }</pidx:UnitOfMeasureCode>
                 </pidx:InvoiceQuantity>
                 <pidx:LineItemInformation>
-                    <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">MC-MSC</pidx:LineItemIdentifier>
-                    <pidx:LineItemDescription>Miscellaneous Charge-Miscellaneous Charges</pidx:LineItemDescription>
+                    <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">${
+                      invoice.priceBook ? lineItem.itemNo : 'MC-MSC'
+                    }</pidx:LineItemIdentifier>
+                    <pidx:LineItemDescription>${
+                      invoice.priceBook
+                        ? lineItem.description
+                        : 'Miscellaneous Charge-Miscellaneous Charges'
+                    }</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
                 ${
                   invoice.purchaseOrder
