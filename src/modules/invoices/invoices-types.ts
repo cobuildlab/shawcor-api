@@ -43,6 +43,7 @@ export type InvoiceTaxLineType = EntityBaseType & {
 
 export type InvoiceLineType = EntityBaseType & {
   itemNo: string;
+  pst: string;
   description: string;
   uom: string;
   quantity: number;
