@@ -254,7 +254,7 @@ export class EnverusOpenInvoiceAPI {
       //   }`,
       // );
       log(
-        `ERROR syncInvoice(Enverus): ${
+        `ERROR syncInvoice(Enverus open invoice): ${
           typeof error === 'string' ? error : JSON.stringify(error)
         }`,
       );
@@ -267,7 +267,7 @@ export class EnverusOpenInvoiceAPI {
 
     if (result.status !== 200) {
       log(
-        `ERROR syncInvoice(Enverus): ${JSON.stringify(
+        `ERROR syncInvoice(Enverus open invoice): ${JSON.stringify(
           jsonResponse.DOResponse,
         )}`,
       );
@@ -285,7 +285,7 @@ export class EnverusOpenInvoiceAPI {
     }
 
     log(
-      `DEBUG: SYNC INVOICE IN ENVERUS: ${
+      `DEBUG: SYNC INVOICE IN ENVERUS OPEN INVOICE: ${
         (JSON.stringify(jsonResponse.DOResponse), null, 2)
       }`,
     );

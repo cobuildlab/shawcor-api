@@ -208,22 +208,10 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                       <pidx:TaxTypeCode>${getTaxTypeCode(
                         taxLine.taxCode,
                       )}</pidx:TaxTypeCode>
-                      ${
-                        lineItem.pst === 'NO'
-                          ? `<pidx:TaxExemptCode>Exempt</pidx:TaxExemptCode>`
-                          : ''
-                      }
-                      ${
-                        lineItem.pst === 'YES'
-                          ? `<pidx:TaxExemptCode>NonExempt</pidx:TaxExemptCode>`
-                          : ''
-                      }
-                      <pidx:TaxRate>${
-                        lineItem.pst === 'NO' ? '0.0' : taxLine.taxPercentage
-                      }</pidx:TaxRate>
+                      <pidx:TaxRate>${taxLine.taxPercentage}</pidx:TaxRate>
                       <pidx:TaxAmount>
                         <pidx:MonetaryAmount>${
-                          lineItem.pst === 'NO' ? '0.0' : taxLine.taxAmount
+                          taxLine.taxAmount
                         }</pidx:MonetaryAmount>
                       </pidx:TaxAmount>
                     </pidx:Tax>
