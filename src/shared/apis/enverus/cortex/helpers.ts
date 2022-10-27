@@ -59,6 +59,11 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:PartnerIdentifier partnerIdentifierIndicator="DUNSNumber">249054263</pidx:PartnerIdentifier>
             </pidx:PartnerInformation>
             ${
+              invoiceTypeCode
+                ? `<pidx:InvoiceTypeCode>${invoiceTypeCode}</pidx:InvoiceTypeCode>`
+                : ''
+            }
+            ${
               invoice.purchaseOrder
                 ? `
               <!--Optional for OpenInvoice, may be required by the buyer-->
@@ -66,11 +71,6 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:PurchaseOrderNumber>${invoice.purchaseOrder}</pidx:PurchaseOrderNumber>
               </pidx:PurchaseOrderInformation>
             `
-                : ''
-            }
-            ${
-              invoiceTypeCode
-                ? `<pidx:InvoiceTypeCode>${invoiceTypeCode}</pidx:InvoiceTypeCode>`
                 : ''
             }
             <!--Required for OpenInvoice-->
