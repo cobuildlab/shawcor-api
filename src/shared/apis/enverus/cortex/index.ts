@@ -5,6 +5,10 @@ import { InvoiceType } from '../../../../modules/invoices/invoices-types';
 import { log, flush } from '../../../logger';
 import { handleTryCatch } from '../../../utils';
 import { getApiUrl, getInvoiceBodyXML } from './helpers';
+import {
+  PASSWORD_CREDENTIALS_CORTEX,
+  USERNAME_CREDENTIALS_CORTEX,
+} from '../../../constants';
 
 export class EnverusCortexAPI {
   /**
@@ -26,6 +30,11 @@ export class EnverusCortexAPI {
       fetch(`${getApiUrl(environment)}/${invoice.invoiceId}.xml`, {
         method: 'POST',
         body: bodyXML,
+        headers: {
+          'Content-Type': 'application/xml',
+          Username: USERNAME_CREDENTIALS_CORTEX,
+          Password: PASSWORD_CREDENTIALS_CORTEX,
+        },
       }),
     );
 
