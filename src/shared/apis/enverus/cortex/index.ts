@@ -48,30 +48,30 @@ export class EnverusCortexAPI {
     const jsonResponse = fxp.parse(textResponse);
 
     if (result.status !== 200) {
-      log(
-        `ERROR syncInvoice(Enverus cortex): ${JSON.stringify(
-          jsonResponse.DOResponse,
-        )}`,
-      );
+      log(`ERROR syncInvoice(Enverus cortex): ${JSON.stringify(jsonResponse)}`);
       await flush();
-      // throw new Error(
-      //   `Error syncInvoice(Enverus): ${JSON.stringify(
-      //     jsonResponse.DOResponse,
-      //   )}`,
-      // );
+
       let msjError = '';
-      const errorObject = jsonResponse.DOResponse.Errors.Error;
-      if (Array.isArray(errorObject)) msjError = errorObject[0];
-      else msjError = errorObject;
+
+      if (jsonResponse.DOResponse) {
+        const errorObject = jsonResponse.DOResponse.Errors.Error;
+        if (Array.isArray(errorObject)) msjError = errorObject[0];
+        else msjError = errorObject;
+      } else {
+        msjError = 'Unknown Error';
+      }
+
       return [undefined, Error(msjError)];
     }
 
     log(
-      `DEBUG: SYNC INVOICE IN ENVERUS CORTEX: ${
-        (JSON.stringify(jsonResponse.DOResponse), null, 2)
-      }`,
+      `DEBUG: syncInvoice ENVERUS CORTEX API: ${JSON.stringify(jsonResponse)}`,
     );
 
-    return [result, undefined];
+    const syncInvoiceResponseObject = {
+      message: 'Invoice synced to Enverus Cortex',
+    };
+
+    return [new Response(JSON.stringify(syncInvoiceResponseObject)), undefined];
   };
 }

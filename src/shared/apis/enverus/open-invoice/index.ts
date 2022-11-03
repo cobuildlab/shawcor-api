@@ -15,7 +15,6 @@ import {
 } from '../../../constants';
 import { log, flush } from '../../../logger';
 import { handleTryCatch } from '../../../utils';
-import { FetchStatusInvoiceResponse } from '../../types';
 import { getApiUrl, getInvoiceBodyXML } from './helpers';
 import { EnverusInvoiceStatusEnum, FetchStatusResponseType } from './types';
 
@@ -108,7 +107,7 @@ export class EnverusOpenInvoiceAPI {
     date: string,
     invoiceId: string,
     enverusInvoiceId: string | undefined,
-  ): Promise<[FetchStatusInvoiceResponse, undefined] | [undefined, Error]> => {
+  ): Promise<[Response, undefined] | [undefined, Error]> => {
     let enverusInvoiceNumber = enverusInvoiceId;
 
     if (!enverusInvoiceNumber) {
@@ -173,10 +172,12 @@ export class EnverusOpenInvoiceAPI {
       if (responseList.length) {
         const response = responseList[0];
         return [
-          {
-            enverusInvoiceId: response?.enverusInvoiceId as string,
-            status: response?.status as string,
-          },
+          new Response(
+            JSON.stringify({
+              enverusInvoiceId: response?.enverusInvoiceId as string,
+              status: response?.status as string,
+            }),
+          ),
           undefined,
         ];
       }
@@ -192,10 +193,12 @@ export class EnverusOpenInvoiceAPI {
 
       if (response) {
         return [
-          {
-            enverusInvoiceId: response.enverusInvoiceId as string,
-            status: response.status as string,
-          },
+          new Response(
+            JSON.stringify({
+              enverusInvoiceId: response?.enverusInvoiceId as string,
+              status: response?.status as string,
+            }),
+          ),
           undefined,
         ];
       }
@@ -221,7 +224,6 @@ export class EnverusOpenInvoiceAPI {
     const bodyXML = getInvoiceBodyXML(invoice);
 
     log(`DEBUG: REQUEST XML: ${bodyXML}`);
-    // console.log(`DEBUG: REQUEST XML: ${bodyXML}`);
 
     const formData = new FormData();
     formData.append('pidxv10_invoice_xml', bodyXML, {
@@ -268,28 +270,37 @@ export class EnverusOpenInvoiceAPI {
     if (result.status !== 200) {
       log(
         `ERROR syncInvoice(Enverus open invoice): ${JSON.stringify(
-          jsonResponse.DOResponse,
+          jsonResponse,
         )}`,
       );
       await flush();
-      // throw new Error(
-      //   `Error syncInvoice(Enverus): ${JSON.stringify(
-      //     jsonResponse.DOResponse,
-      //   )}`,
-      // );
+
       let msjError = '';
-      const errorObject = jsonResponse.DOResponse.Errors.Error;
-      if (Array.isArray(errorObject)) msjError = errorObject[0];
-      else msjError = errorObject;
+
+      if (jsonResponse.DOResponse) {
+        const errorObject = jsonResponse.DOResponse.Errors.Error;
+        if (Array.isArray(errorObject)) msjError = errorObject[0];
+        else msjError = errorObject;
+      } else {
+        msjError = 'Unknown Error';
+      }
+
       return [undefined, Error(msjError)];
     }
 
     log(
-      `DEBUG: SYNC INVOICE IN ENVERUS OPEN INVOICE: ${
-        (JSON.stringify(jsonResponse.DOResponse), null, 2)
-      }`,
+      `DEBUG: syncInvoice ENVERUS OPEN INVOICE API: ${JSON.stringify(
+        jsonResponse,
+      )}`,
     );
 
-    return [result, undefined];
+    const syncInvoiceResponseObject = {
+      message: 'Invoice synced to Enverus Open Invoice',
+      warnings: (jsonResponse.DOResponse?.Warnings?.Warning || []).filter(
+        (w: string) => !w.includes('Using default Supplier'),
+      ),
+    };
+
+    return [new Response(JSON.stringify(syncInvoiceResponseObject)), undefined];
   };
 }

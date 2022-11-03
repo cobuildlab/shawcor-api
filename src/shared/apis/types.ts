@@ -1,4 +1,7 @@
 /* eslint-disable no-unused-vars */
+
+import { Response } from 'node-fetch';
+
 // API Names in 8base
 export enum ApiNameEnum {
   Jobutrax = 'JOBUTRAX',
@@ -15,7 +18,7 @@ export type FetchStatusBody = {
   enverusInvoiceId?: string;
 };
 
-export type FetchStatusInvoiceResponse = {
-  enverusInvoiceId: string;
-  status: string;
-};
+export type StatusInvoiceResponseType =
+  | [Response, undefined]
+  | [undefined, Error]
+  | [undefined, undefined];
