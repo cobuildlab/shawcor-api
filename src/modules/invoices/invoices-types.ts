@@ -1,5 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { ApiNameEnum } from '../../shared/apis/types';
+import { Response } from 'node-fetch';
+import {
+  ApiNameEnum,
+  StatusInvoiceResponseType,
+} from '../../shared/apis/types';
 import { AddressType, EntityBaseType } from '../../shared/types';
 
 export type CustomerType = EntityBaseType & {
@@ -92,3 +96,9 @@ export type InvoiceBody = {
   file: string;
   environment: string;
 };
+
+export type ParamFilterValidationError = { [key: string]: string }[];
+
+export type StatusInvoiceServiceResponse = Promise<
+  StatusInvoiceResponseType | [Response, undefined]
+>;

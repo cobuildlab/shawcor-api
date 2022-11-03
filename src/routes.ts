@@ -3,13 +3,13 @@ const router = express.Router();
 
 import {
   statusApi,
-  statusInvoice,
-  syncInvoice,
+  statusInvoiceController,
+  syncInvoiceController,
 } from './modules/invoices/invoices-controllers';
 
 router.get('/status', statusApi);
-router.get('/status-invoice', statusInvoice);
-router.post('/sync-invoice', syncInvoice);
+router.get('/status-invoice', statusInvoiceController);
+router.post('/sync-invoice', syncInvoiceController);
 
 router
   .route('*')

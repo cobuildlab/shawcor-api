@@ -6,17 +6,14 @@ import { EnverusOpenInvoiceAPI } from './enverus/open-invoice';
 import {
   ApiNameEnum,
   FetchStatusBody,
-  FetchStatusInvoiceResponse,
+  StatusInvoiceResponseType,
 } from './types';
 
 export const fetchStatusInvoiceFromApi = async (
-  nameApi: `${ApiNameEnum}`,
   paramsFilter: FetchStatusBody,
-): Promise<
-  | [FetchStatusInvoiceResponse, undefined]
-  | [undefined, Error]
-  | [undefined, undefined]
-> => {
+): Promise<StatusInvoiceResponseType> => {
+  const { nameApi } = paramsFilter;
+
   if (ApiNameEnum.EnverusCortex === nameApi) {
     return [undefined, undefined];
   } else if (ApiNameEnum.EnverusOpenInvoice === nameApi) {

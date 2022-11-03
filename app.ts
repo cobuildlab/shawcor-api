@@ -13,5 +13,5 @@ app.use(express.json());
 app.use('/api', router);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Shawcor api listening on port ${port}`);
 });
