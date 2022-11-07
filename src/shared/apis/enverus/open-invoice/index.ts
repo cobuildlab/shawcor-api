@@ -8,11 +8,7 @@ import {
   InvoiceStatusEnum,
   InvoiceType,
 } from '../../../../modules/invoices/invoices-types';
-import {
-  PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE,
-  PATH_PFX,
-  PASSPHRASE,
-} from '../../../constants';
+import { PATH_PFX, PASSPHRASE } from '../../../constants';
 import { log, flush } from '../../../logger';
 import { handleTryCatch } from '../../../utils';
 import { getApiUrl, getInvoiceBodyXML } from './helpers';
@@ -20,12 +16,13 @@ import { EnverusInvoiceStatusEnum, FetchStatusResponseType } from './types';
 
 export class EnverusOpenInvoiceAPI {
   _fetchStatus = async (
+    environment: string,
     invoiceId: string,
     numberId: string,
   ): Promise<FetchStatusResponseType> => {
     let statusInvoice = '';
     const response = await fetch(
-      `${PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE}/${numberId}`,
+      `${getApiUrl(environment, 'GET')}/${numberId}`,
       {
         method: 'GET',
         agent: new https.Agent({
@@ -97,12 +94,14 @@ export class EnverusOpenInvoiceAPI {
   /**
    * Method for fetch invoice status.
    *
+   * @param environment - Environment name.
    * @param duns - Buyer duns.
    * @param date - Submitted date.
    * @param invoiceId - Invoice ID.
    * @param enverusInvoiceId - Invoice ID in ENVERUS.
    */
   fetchStatusInvoice = async (
+    environment: string,
     duns: string,
     date: string,
     invoiceId: string,
@@ -113,7 +112,7 @@ export class EnverusOpenInvoiceAPI {
     if (!enverusInvoiceNumber) {
       const filter = `buyerDUNS eq ${duns} and status eq 'approved,disputed,paid,received' and lastActionDate eq ${date}`;
       const [result, error] = await handleTryCatch(
-        fetch(`${PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE}?$filter=${filter}`, {
+        fetch(`${getApiUrl(environment, 'GET')}?$filter=${filter}`, {
           method: 'GET',
           agent: new https.Agent({
             pfx: fs.readFileSync(PATH_PFX),
@@ -156,7 +155,7 @@ export class EnverusOpenInvoiceAPI {
       for (const link of linkList) {
         const numberId = link.links[0].uri.split('/').pop();
         if (numberId) {
-          promises.push(this._fetchStatus(invoiceId, numberId));
+          promises.push(this._fetchStatus(environment, invoiceId, numberId));
         }
       }
 
@@ -187,6 +186,7 @@ export class EnverusOpenInvoiceAPI {
       return [undefined, Error('Not found invoice Id')];
     } else {
       const response: FetchStatusResponseType = await this._fetchStatus(
+        environment,
         invoiceId,
         enverusInvoiceNumber,
       );
@@ -235,7 +235,7 @@ export class EnverusOpenInvoiceAPI {
     });
 
     const [result, error] = await handleTryCatch(
-      fetch(getApiUrl(environment), {
+      fetch(getApiUrl(environment, 'POST'), {
         method: 'POST',
         agent: new https.Agent({
           pfx: fs.readFileSync(PATH_PFX),

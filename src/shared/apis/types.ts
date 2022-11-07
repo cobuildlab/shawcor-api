@@ -11,6 +11,7 @@ export enum ApiNameEnum {
 }
 
 export type FetchStatusBody = {
+  environment: string;
   nameApi: `${ApiNameEnum}`;
   dunsBuyer: string;
   submittedDate: string;

@@ -17,12 +17,18 @@ export const fetchStatusInvoiceFromApi = async (
   if (ApiNameEnum.EnverusCortex === nameApi) {
     return [undefined, undefined];
   } else if (ApiNameEnum.EnverusOpenInvoice === nameApi) {
-    const { dunsBuyer, submittedDate, invoiceId, enverusInvoiceId } =
-      paramsFilter;
+    const {
+      dunsBuyer,
+      environment,
+      submittedDate,
+      invoiceId,
+      enverusInvoiceId,
+    } = paramsFilter;
 
     const clientEnverus = new EnverusOpenInvoiceAPI();
     const [statusInvoiceResponse, error] =
       await clientEnverus.fetchStatusInvoice(
+        environment,
         dunsBuyer,
         submittedDate,
         invoiceId,

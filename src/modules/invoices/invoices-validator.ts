@@ -4,6 +4,10 @@ import { FetchStatusBody } from '../../shared/apis/types';
 import { ParamFilterValidationError } from './invoices-types';
 
 const invoiceSchema = yup.object().shape({
+  environment: yup
+    .string()
+    .required('environment is required')
+    .typeError('environment must be a string type'),
   invoiceId: yup
     .string()
     .required('invoiceId is required')
