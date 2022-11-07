@@ -2,18 +2,31 @@ const xmlescape = require('escape-xml');
 
 import { InvoiceType } from '../../../../modules/invoices/invoices-types';
 import {
+  PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE,
+  PATH_MASTER_GET_INVOICE_RESPONSE_OPEN_INVOICE,
   PATH_MASTER_POST_INVOICE_OPEN_INVOICE,
   PATH_POST_INVOICE_OPEN_INVOICE,
 } from '../../../constants';
 import { EnvironmentEnum } from '../../../types';
 import { getInvoiceTypeCode, getTaxTypeCode } from '../../helpers';
 
-export const getApiUrl = (environment: string) => {
-  if (environment === EnvironmentEnum.Main) {
-    return PATH_POST_INVOICE_OPEN_INVOICE;
-  } else if (environment === EnvironmentEnum.Master) {
-    return PATH_MASTER_POST_INVOICE_OPEN_INVOICE;
+export const getApiUrl = (environment: string, method: 'GET' | 'POST') => {
+  if ('GET' === method) {
+    if (environment === EnvironmentEnum.Main) {
+      return PATH_GET_INVOICE_RESPONSE_OPEN_INVOICE;
+    } else if (environment === EnvironmentEnum.Master) {
+      return PATH_MASTER_GET_INVOICE_RESPONSE_OPEN_INVOICE;
+    }
   }
+
+  if ('POST' === method) {
+    if (environment === EnvironmentEnum.Main) {
+      return PATH_POST_INVOICE_OPEN_INVOICE;
+    } else if (environment === EnvironmentEnum.Master) {
+      return PATH_MASTER_POST_INVOICE_OPEN_INVOICE;
+    }
+  }
+
   return '';
 };
 
