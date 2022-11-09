@@ -234,8 +234,12 @@ export class EnverusOpenInvoiceAPI {
       contentTransferEncoding: 'base64',
     });
 
+    const apiUrl = getApiUrl(environment, 'POST');
+
+    log(`DEBUG: syncInvoice ENVERUS OPEN INVOICE API URL: ${apiUrl}`);
+
     const [result, error] = await handleTryCatch(
-      fetch(getApiUrl(environment, 'POST'), {
+      fetch(apiUrl, {
         method: 'POST',
         agent: new https.Agent({
           pfx: fs.readFileSync(PATH_PFX),
