@@ -145,7 +145,7 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 invoice.approver ? `Approver: ${invoice.approver}` : ''
               }${invoice.approver ? ' - ' : ''}${
                     invoice.workLocation
-                      ? `Work location: ${invoice.workLocation}`
+                      ? `Work location: ${xmlescape(invoice.workLocation)}`
                       : ''
                   }</pidx:Comment>
                  `
@@ -171,11 +171,11 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 </pidx:InvoiceQuantity>
                 <pidx:LineItemInformation>
                     <pidx:LineItemIdentifier identifierIndicator="AssignedBySeller">${
-                      invoice.priceBook ? lineItem.itemNo : 'MC-MSC'
+                      invoice.priceBook ? xmlescape(lineItem.itemNo) : 'MC-MSC'
                     }</pidx:LineItemIdentifier>
                     <pidx:LineItemDescription>${
                       invoice.priceBook
-                        ? lineItem.description
+                        ? xmlescape(lineItem.description)
                         : 'Miscellaneous Charge-Miscellaneous Charges'
                     }</pidx:LineItemDescription>
                 </pidx:LineItemInformation>
