@@ -209,21 +209,25 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                         taxLine.taxCode,
                       )}</pidx:TaxTypeCode>
                       ${
-                        lineItem.pst === 'NO'
+                        lineItem.pst === 'NO' && taxLine.taxCode !== 'GST'
                           ? `<pidx:TaxExemptCode>Exempt</pidx:TaxExemptCode>`
                           : ''
                       }
                       ${
-                        lineItem.pst === 'YES'
+                        lineItem.pst === 'YES' && taxLine.taxCode !== 'GST'
                           ? `<pidx:TaxExemptCode>NonExempt</pidx:TaxExemptCode>`
                           : ''
                       }
                       <pidx:TaxRate>${
-                        lineItem.pst === 'NO' ? '0.0' : taxLine.taxPercentage
+                        lineItem.pst === 'NO' && taxLine.taxCode !== 'GST'
+                          ? '0.0'
+                          : taxLine.taxPercentage
                       }</pidx:TaxRate>
                       <pidx:TaxAmount>
                         <pidx:MonetaryAmount>${
-                          lineItem.pst === 'NO' ? '0.0' : taxLine.taxAmount
+                          lineItem.pst === 'NO' && taxLine.taxCode !== 'GST'
+                            ? '0.0'
+                            : taxLine.taxAmount
                         }</pidx:MonetaryAmount>
                       </pidx:TaxAmount>
                     </pidx:Tax>
@@ -237,6 +241,18 @@ export const getInvoiceBodyXML = (invoice: InvoiceType): string => {
                 <pidx:ServiceDateTime dateTypeIndicator="ServicePeriodEnd">${
                   invoice.invoiceDate
                 }T00:00:00Z</pidx:ServiceDateTime>
+
+                ${
+                  invoice.costCenter
+                    ? `
+                  <pidx:ReferenceInformation referenceInformationIndicator="CostCenter">
+                    <pidx:ReferenceNumber>${xmlescape(
+                      invoice.costCenter,
+                    )}</pidx:ReferenceNumber>
+                  </pidx:ReferenceInformation>
+                `
+                    : ''
+                }
               </pidx:InvoiceLineItem>
               `,
             )
